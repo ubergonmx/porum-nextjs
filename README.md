@@ -33,10 +33,16 @@ npm run prepare
 > to your **User** and **System** PATH.
 > Learn more in the following solutions: [Solution 1](https://github.com/desktop/desktop/issues/17385#issuecomment-1718170235) and [Solution 2](https://github.com/desktop/desktop/issues/12586#issuecomment-1822189613)
 
-4. Run the development server.
+4. Run database with docker
+
+```bash
+docker compose up
+```
+
+5. Run the development server.
 
 ```bash
 npm run dev
 ```
 
-5. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+6. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
