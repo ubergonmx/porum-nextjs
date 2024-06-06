@@ -10,5 +10,6 @@
   "git.suggestSmartCommit": false,
   "[typescriptreact]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+  },
+  "cSpell.words": ["Porum"]
 }
