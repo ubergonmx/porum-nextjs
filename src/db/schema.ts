@@ -1,4 +1,12 @@
-import { pgTableCreator, index, text, timestamp } from "drizzle-orm/pg-core";
+import {
+  pgTableCreator,
+  index,
+  text,
+  serial,
+  int,
+  varchar,
+  timestamp,
+} from "drizzle-orm/pg-core";
 import { DATABASE_PREFIX as prefix } from "@/lib/constants";
 
 export const pgTable = pgTableCreator((name: string) => `${prefix}_${name}`);
@@ -26,3 +34,31 @@ export const users = pgTable(
 
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
+
+export const Threads = pgTable("threads", {
+  id: serial("id").primaryKey(),
+  title: varchar("title", { length: 255 }).notNull(),
+  user_id: int("user_id").references(() => users.id, { onDelete: "cascade" }),
+  created_at: timestamp("created_at").defaultNow().notNull(),
+  updated_at: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const Posts = pgTable("posts", {
+  id: serial("id").primaryKey(),
+  thread_id: int("thread_id").references(() => Threads.id, {
+    onDelete: "cascade",
+  }),
+  user_id: int("user_id").references(() => users.id, { onDelete: "cascade" }),
+  content: text("content").notNull(),
+  created_at: timestamp("created_at").defaultNow().notNull(),
+  updated_at: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const Comments = pgTable("comments", {
+  id: serial("id").primaryKey(),
+  post_id: int("post_id").references(() => Posts.id, { onDelete: "cascade" }),
+  user_id: int("user_id").references(() => users.id, { onDelete: "cascade" }),
+  content: text("content").notNull(),
+  created_at: timestamp("created_at").defaultNow().notNull(),
+  updated_at: timestamp("updated_at").defaultNow().notNull(),
+});
