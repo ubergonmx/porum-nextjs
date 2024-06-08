@@ -3,13 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "npm run db:migrate && next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "npm run db:migrate && next start",
     "lint": "next lint",
     "prettier": "prettier --write \"**/*.+(js|jsx|ts|tsx|json|yml|yaml|md|css)\"",
     "clean-local": "npx git-removed-branches --prune",
-    "prepare": "husky"
+    "prepare": "husky",
+    "db:push": "drizzle-kit push",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
     "@t3-oss/env-nextjs": "^0.10.1",
