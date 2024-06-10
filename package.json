@@ -16,6 +16,7 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
+    "@lucia-auth/adapter-drizzle": "^1.0.7",
     "@t3-oss/env-nextjs": "^0.10.1",
     "drizzle-orm": "^0.30.10",
     "lucia": "^3.2.0",
