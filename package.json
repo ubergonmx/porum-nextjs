@@ -3,17 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "npm run db:migrate && next dev",
+    "dev": "npm run db:generate && npm run db:migrate && next dev",
     "build": "next build",
-    "start": "npm run db:migrate && next start",
+    "start": "npm run db:generate && npm run db:migrate && next start",
     "lint": "next lint",
     "prettier": "prettier --write \"**/*.+(js|jsx|ts|tsx|json|yml|yaml|md|css)\"",
     "clean-local": "npx git-removed-branches --prune",
     "prepare": "husky",
     "db:push": "drizzle-kit push",
-    "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate",
-    "db:studio": "drizzle-kit studio"
+    "db:generate": "drizzle-kit generate --config=drizzle.config.ts",
+    "db:migrate": "drizzle-kit migrate --config=drizzle.config.ts",
+    "db:studio": "drizzle-kit studio --config=drizzle.config.ts"
   },
   "dependencies": {
     "@lucia-auth/adapter-drizzle": "^1.0.7",
