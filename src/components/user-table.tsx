@@ -13,8 +13,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { User } from "@/db/schema";
 
-export default function UserTable() {
+interface UserTableProps {
+  users?: User[];
+}
+
+export default async function UserTable({ users }: UserTableProps) {
   return (
     <Card>
       <CardHeader className="px-7">
@@ -27,6 +32,7 @@ export default function UserTable() {
             <TableRow>
               <TableHead>Username</TableHead>
               <TableHead className="hidden md:table-cell">Email</TableHead>
+              <TableHead className="hidden md:table-cell">Role</TableHead>
               <TableHead className="hidden sm:table-cell">First Name</TableHead>
               <TableHead className="hidden sm:table-cell">Last Name</TableHead>
               <TableHead className="hidden sm:table-cell">Phone #</TableHead>
@@ -34,22 +40,55 @@ export default function UserTable() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableRow className="bg-accent">
-              <TableCell>
-                <div className="font-medium">TestUser</div>
-              </TableCell>
-              <TableCell className="hidden sm:table-cell">
-                Tester@Test.com
-              </TableCell>
-              <TableCell className="hidden sm:table-cell">First Test</TableCell>
-              <TableCell className="hidden sm:table-cell">Last Test</TableCell>
-              <TableCell className="hidden sm:table-cell">
-                +63 917 356 2345
-              </TableCell>
-              <TableCell className="hidden sm:table-cell">
-                4WhDg82AljbiO12938W
-              </TableCell>
-            </TableRow>
+            {users && users.length > 0 ? (
+              users.map((user) => (
+                <TableRow key={user.id}>
+                  <TableCell>
+                    <div className="font-medium">{user.username}</div>
+                  </TableCell>
+                  <TableCell className="hidden sm:table-cell">
+                    {user.email}
+                  </TableCell>
+                  <TableCell className="hidden sm:table-cell">
+                    {user.role}
+                  </TableCell>
+                  <TableCell className="hidden sm:table-cell">
+                    {user.firstName}
+                  </TableCell>
+                  <TableCell className="hidden sm:table-cell">
+                    {user.lastName}
+                  </TableCell>
+                  <TableCell className="hidden sm:table-cell">
+                    {user.phoneNumber}
+                  </TableCell>
+                  <TableCell className="hidden sm:table-cell">
+                    {user.password}
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow className="bg-accent">
+                <TableCell>
+                  <div className="font-medium">TestUser</div>
+                </TableCell>
+                <TableCell className="hidden sm:table-cell">
+                  Tester@Test.com
+                </TableCell>
+                <TableCell className="hidden sm:table-cell">Admin</TableCell>
+                <TableCell className="hidden sm:table-cell">
+                  First Test
+                </TableCell>
+                <TableCell className="hidden sm:table-cell">
+                  Last Test
+                </TableCell>
+                <TableCell className="hidden sm:table-cell">
+                  +63 917 356 2345
+                </TableCell>
+                <TableCell className="hidden sm:table-cell">
+                  4WhDg82AljbiO12938W
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </CardContent>

@@ -24,9 +24,16 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import UserTable from "@/components/user-table";
 
-export default function Dashboard() {
+import UserTable from "@/components/user-table";
+import { fetchUsers } from "./actions";
+import { User } from "@/db/schema";
+
+export default async function Dashboard() {
+  // This loads the user database from postgres drizzle-orm
+  // uses server actions to get the data using actions.ts
+  const users: User[] = await fetchUsers();
+
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       <div className="hidden border-r bg-muted/40 md:block">
@@ -154,7 +161,7 @@ export default function Dashboard() {
           </DropdownMenu>
         </header>
         <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
-          <UserTable />
+          <UserTable users={users} />
         </main>
       </div>
     </div>
