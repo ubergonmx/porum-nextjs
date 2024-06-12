@@ -18,6 +18,7 @@ export const users = pgTable(
     id: text("id")
       .primaryKey()
       .$defaultFn(() => generateIdFromEntropySize(10)),
+    username: text("username").unique().notNull(),
     firstName: text("first_name").notNull(),
     lastName: text("last_name").notNull(),
     email: text("email").unique().notNull(),
