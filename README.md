@@ -46,3 +46,15 @@ npm run dev
 ```
 
 6. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+---
+
+## Other
+
+### View database
+
+Simply run the following command to open Drizzle Studio. If you have any issues, check this [solution](https://github.com/sameersbn/docker-postgresql/issues/112#issuecomment-579712540)
+
+```bash
+npm run db:studio
+```
