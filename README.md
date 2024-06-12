@@ -39,13 +39,19 @@ npm run prepare
 docker compose up
 ```
 
-5. Run the development server.
+5. Push schema to database
+
+```bash
+npm run db:push
+```
+
+6. Run the development server.
 
 ```bash
 npm run dev
 ```
 
-6. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+7. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 ---
 
