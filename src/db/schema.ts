@@ -2,30 +2,40 @@ import {
   pgTableCreator,
   index,
   text,
-  serial,
-  int,
-  varchar,
   timestamp,
+  pgEnum,
 } from "drizzle-orm/pg-core";
 import { DATABASE_PREFIX as prefix } from "@/lib/constants";
+import { generateIdFromEntropySize } from "lucia";
 
 export const pgTable = pgTableCreator((name: string) => `${prefix}_${name}`);
+
+export const roleEnum = pgEnum("role", ["admin", "moderator", "user"]);
 
 export const users = pgTable(
   "users",
   {
     id: text("id")
       .primaryKey()
-      .$defaultFn(() => crypto.randomUUID()),
-    firstName: text("firstName").notNull(),
-    lastName: text("lastName").notNull(),
-    email: text("email").notNull(),
-    emailVerified: timestamp("emailVerified", { mode: "date" }),
-    phoneNumber: text("phoneNumber"),
-    image: text("image"),
-    role: text("role").notNull().$type<"admin" | "user">(),
-    createdAt: timestamp("createdAt", { mode: "date" }).notNull(),
-    updatedAt: timestamp("updatedAt", { mode: "date" }).notNull(),
+      .$defaultFn(() => generateIdFromEntropySize(10)),
+    firstName: text("first_name").notNull(),
+    lastName: text("last_name").notNull(),
+    email: text("email").unique().notNull(),
+    emailVerified: timestamp("email_verified", { mode: "date" }),
+    password: text("password").notNull(),
+    phoneNumber: text("phone_number"),
+    avatar: text("avatar"),
+    role: roleEnum("role").notNull(),
+    createdAt: timestamp("created_at", {
+      mode: "date",
+      withTimezone: true,
+    })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", {
+      mode: "date",
+      withTimezone: true,
+    }).$onUpdate(() => new Date()),
   },
   (t) => ({
     emailIdx: index("user_email_idx").on(t.email),
@@ -35,30 +45,54 @@ export const users = pgTable(
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 
-export const Threads = pgTable("threads", {
-  id: serial("id").primaryKey(),
-  title: varchar("title", { length: 255 }).notNull(),
-  user_id: int("user_id").references(() => users.id, { onDelete: "cascade" }),
-  created_at: timestamp("created_at").defaultNow().notNull(),
-  updated_at: timestamp("updated_at").defaultNow().notNull(),
-});
-
-export const Posts = pgTable("posts", {
-  id: serial("id").primaryKey(),
-  thread_id: int("thread_id").references(() => Threads.id, {
-    onDelete: "cascade",
+export const sessions = pgTable(
+  "sessions",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id").notNull(),
+    expiresAt: timestamp("expires_at", {
+      withTimezone: true,
+      mode: "date",
+    }).notNull(),
+  },
+  (t) => ({
+    userIdx: index("session_user_idx").on(t.userId),
   }),
-  user_id: int("user_id").references(() => users.id, { onDelete: "cascade" }),
-  content: text("content").notNull(),
-  created_at: timestamp("created_at").defaultNow().notNull(),
-  updated_at: timestamp("updated_at").defaultNow().notNull(),
-});
+);
 
-export const Comments = pgTable("comments", {
-  id: serial("id").primaryKey(),
-  post_id: int("post_id").references(() => Posts.id, { onDelete: "cascade" }),
-  user_id: int("user_id").references(() => users.id, { onDelete: "cascade" }),
-  content: text("content").notNull(),
-  created_at: timestamp("created_at").defaultNow().notNull(),
-  updated_at: timestamp("updated_at").defaultNow().notNull(),
-});
+export const emailVerificationCodes = pgTable(
+  "email_verification_codes",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => generateIdFromEntropySize(10)),
+    userId: text("user_id").unique().notNull(),
+    email: text("email").notNull(),
+    code: text("code").notNull(),
+    expiresAt: timestamp("expires_at", {
+      withTimezone: true,
+      mode: "date",
+    }).notNull(),
+  },
+  (t) => ({
+    userIdx: index("verification_code_user_idx").on(t.userId),
+    emailIdx: index("verification_code_email_idx").on(t.email),
+  }),
+);
+
+export const passwordResetTokens = pgTable(
+  "password_reset_tokens",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => generateIdFromEntropySize(10)),
+    userId: text("user_id").notNull(),
+    expiresAt: timestamp("expires_at", {
+      withTimezone: true,
+      mode: "date",
+    }).notNull(),
+  },
+  (t) => ({
+    userIdx: index("password_token_user_idx").on(t.userId),
+  }),
+);
