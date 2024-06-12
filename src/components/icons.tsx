@@ -60,6 +60,6 @@ const AnimatedSpinner = forwardRef<SVGSVGElement, SVGProps<SVGSVGElement>>(
 );
 AnimatedSpinner.displayName = "AnimatedSpinner";
 
-// export {
-//     // add icons here
-// } from "lucide-react";
+export { AnimatedSpinner };
+
+export { Eye as EyeOpenIcon, EyeOff as EyeCloseIcon } from "lucide-react";
