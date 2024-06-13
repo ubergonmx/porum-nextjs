@@ -14,7 +14,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { PhoneInput } from "@/components/ui/phone-input";
+import { PhoneInput } from "@/components/phone-input";
 import { PasswordInput } from "@/components/password-input";
 import { SubmitButton } from "@/components/submit-button";
 import Link from "next/link";
@@ -131,9 +131,6 @@ export default function SignUpForm() {
               <FormControl className="w-full">
                 <PhoneInput placeholder="Enter a phone number" {...field} />
               </FormControl>
-              <FormDescription className="text-left">
-                Enter a phone number
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}

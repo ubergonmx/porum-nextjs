@@ -6,23 +6,23 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { APP_TITLE } from "@/lib/constants";
+import { validateRequest } from "@/lib/auth/validate-requests";
+import { APP_TITLE, Paths } from "@/lib/constants";
+import { redirect } from "next/navigation";
 
 export default async function SignUp() {
+  const { user } = await validateRequest();
+
+  if (user) {
+    if (user.role === "admin") {
+      return redirect(Paths.AdminDashboard);
+    } else {
+      return redirect(Paths.Home);
+    }
+  }
+
   return (
     <div className="pt:mt-0 mx-auto flex flex-col items-center justify-center px-6 pt-8 dark:bg-gray-900 md:h-screen">
-      {/* <a
-        href="#"
-        className="mb-8 flex items-center justify-center text-2xl font-semibold dark:text-white lg:mb-10"
-      >
-        <img src="/vercel.svg" className="mr-4 h-11" />
-      </a>
-      <div className="w-full max-w-xl space-y-8 rounded-lg bg-white p-6 shadow dark:bg-gray-800 sm:p-8">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Create a Free Account
-        </h2>
-        <SignUpForm />
-      </div> */}
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle>{APP_TITLE} Sign Up</CardTitle>
