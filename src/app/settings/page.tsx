@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import AvatarUploadChunk from "./avatar-upload";
 
 export default function Dashboard() {
   return (
@@ -176,21 +177,7 @@ export default function Dashboard() {
               </CardFooter>
             </Card>
             <Card x-chunk="dashboard-04-chunk-2">
-              <CardHeader>
-                <CardTitle>Avatar</CardTitle>
-                <CardDescription>
-                  Upload your avatar here! This is your user avatar shown to
-                  others in Porum.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <form className="flex flex-col gap-4">
-                  <Input type="file" accept="image/png, image/jpeg" />
-                </form>
-              </CardContent>
-              <CardFooter className="border-t px-6 py-4">
-                <Button>Save</Button>
-              </CardFooter>
+              <AvatarUploadChunk />
             </Card>
             <Card x-chunk="dashboard-04-chunk-3">
               <CardHeader>
