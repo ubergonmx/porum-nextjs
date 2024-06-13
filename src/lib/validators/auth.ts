@@ -21,7 +21,7 @@ export const signupSchema = z.object({
     .string({ required_error: "Last name is required" })
     .trim()
     .min(1, {
-      message: "First name must be at least 1 character",
+      message: "Last name must be at least 1 character",
     })
     .max(255, {
       message: "Last name must not be more than 255 characters long",
@@ -66,14 +66,18 @@ export const signupSchema = z.object({
   avatar: z
     .instanceof(File)
     .optional()
-    .refine((file) => file!.size <= MAX_FILE_SIZE, `Max image size is 5MB`)
     .refine(
-      (file) => ACCEPTED_IMAGE_TYPES.includes(file!.type),
+      (file) => !file || file.size <= MAX_FILE_SIZE,
+      `Max image size is 5MB`,
+    )
+    .refine(
+      (file) => !file || ACCEPTED_IMAGE_TYPES.includes(file.type),
       "Must be PNG or JPEG",
     )
     .refine(async (file) => {
+      if (!file) return true;
       // Check Magic Number
-      const arrayBuffer = await file!.arrayBuffer();
+      const arrayBuffer = await file.arrayBuffer();
       const byteArray = new Uint8Array(arrayBuffer);
 
       const jpgMagicNumbers = [0xff, 0xd8, 0xff];
