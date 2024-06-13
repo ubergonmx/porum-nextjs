@@ -34,7 +34,7 @@ export async function login(
 
   const existingUser = await db.query.users.findFirst({
     where: (table, { eq }) => eq(table.email, email),
-    columns: { id: true, email: true, password: true },
+    columns: { id: true, email: true, password: true, role: true },
   });
 
   if (!existingUser) {
@@ -63,5 +63,10 @@ export async function login(
     sessionCookie.value,
     sessionCookie.attributes,
   );
-  return redirect(Paths.Home);
+
+  if (existingUser.role === "admin") {
+    return redirect(Paths.AdminDashboard);
+  } else {
+    return redirect(Paths.Home);
+  }
 }
