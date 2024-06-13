@@ -22,6 +22,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import AvatarUploadChunk from "./avatar-upload";
+import Image from "next/image";
 
 export default function Dashboard() {
   return (
@@ -155,26 +156,41 @@ export default function Dashboard() {
             x-chunk="dashboard-04-chunk-0"
           >
             <Link href="#" className="font-semibold text-primary">
-              General
+              Account Settings
             </Link>
-            <Link href="#">Security</Link>
           </nav>
           <div className="grid gap-6">
             <Card x-chunk="dashboard-04-chunk-1">
               <CardHeader>
-                <CardTitle>Store Name</CardTitle>
-                <CardDescription>
-                  Used to identify your store in the marketplace.
-                </CardDescription>
+                <CardTitle>Account</CardTitle>
+                <CardDescription>Account Details</CardDescription>
               </CardHeader>
               <CardContent>
-                <form>
-                  <Input placeholder="Store Name" />
-                </form>
+                <div className="flex flex-col gap-4">
+                  <div className="flex items-center gap-4">
+                    <div>
+                      <Image
+                        src="/avatars/default.png"
+                        alt="User Avatar"
+                        width={64}
+                        height={64}
+                        className="size-20 rounded-full"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <span>
+                        Username: <strong>TestUser</strong>
+                      </span>
+                      <span>
+                        Email: <strong>Email</strong>
+                      </span>
+                    </div>
+                  </div>
+                </div>
               </CardContent>
-              <CardFooter className="border-t px-6 py-4">
+              {/* <CardFooter className="border-t px-6 py-4">
                 <Button>Save</Button>
-              </CardFooter>
+              </CardFooter> */}
             </Card>
             <Card x-chunk="dashboard-04-chunk-2">
               <AvatarUploadChunk />
