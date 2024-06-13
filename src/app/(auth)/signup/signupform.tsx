@@ -18,12 +18,19 @@ import { PhoneInput } from "@/components/phone-input";
 import { PasswordInput } from "@/components/password-input";
 import { SubmitButton } from "@/components/submit-button";
 import Link from "next/link";
-import { useFormState } from "react-dom";
 import { signupSchema, SignupInput } from "@/lib/validators/auth";
 import { signup } from "./actions";
-
+import { useState, useTransition } from "react";
+type FormFieldKey =
+  | "firstName"
+  | "lastName"
+  | "username"
+  | "email"
+  | "password"
+  | "phone";
 export default function SignUpForm() {
-  const [state, formAction] = useFormState(signup, null);
+  const [isPending, startTransition] = useTransition();
+  const [signupError, setSignupError] = useState<string | null>(null);
 
   const form = useForm<SignupInput>({
     resolver: zodResolver(signupSchema),
@@ -38,16 +45,25 @@ export default function SignUpForm() {
   });
 
   function onSubmit(values: SignupInput) {
-    console.log(values);
+    startTransition(() => {
+      setSignupError(null);
+      signup(values).then((result) => {
+        if (result?.fieldError) {
+          Object.entries(result.fieldError).forEach(([field, message]) => {
+            form.setError(field as FormFieldKey, {
+              type: "manual",
+              message,
+            });
+          });
+        }
+        if (result?.formError) setSignupError(result.formError);
+      });
+    });
   }
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        action={formAction}
-        className="space-y-2"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
         <div className="grid grid-cols-2 gap-4">
           <FormField
             control={form.control}
@@ -135,19 +151,11 @@ export default function SignUpForm() {
             </FormItem>
           )}
         />
-        {state?.fieldError ? (
-          <ul className="list-disc space-y-1 rounded-lg border bg-destructive/10 p-2 text-[0.8rem] font-medium text-destructive">
-            {Object.values(state.fieldError).map((err) => (
-              <li className="ml-4" key={err}>
-                {err}
-              </li>
-            ))}
-          </ul>
-        ) : state?.formError ? (
+        {signupError && (
           <p className="rounded-lg border bg-destructive/10 p-2 text-[0.8rem] font-medium text-destructive">
-            {state?.formError}
+            {signupError}
           </p>
-        ) : null}
+        )}
         <div>
           <Link href={"/login"}>
             <span className="p-0 text-xs font-medium underline-offset-4 hover:underline">
@@ -155,7 +163,9 @@ export default function SignUpForm() {
             </span>
           </Link>
         </div>
-        <SubmitButton className="w-full">Sign Up</SubmitButton>
+        <SubmitButton className="w-full" loading={isPending}>
+          Sign Up
+        </SubmitButton>
         <Button variant="outline" className="w-full" asChild>
           <Link href="/">Cancel</Link>
         </Button>

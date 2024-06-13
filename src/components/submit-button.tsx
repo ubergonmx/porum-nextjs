@@ -5,14 +5,20 @@ import { useFormStatus } from "react-dom";
 import { LoadingButton } from "@/components/loading-button";
 import type { ButtonProps } from "@/components/ui/button";
 
-const SubmitButton = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, children, ...props }, ref) => {
+// Extend ButtonProps to include custom props
+interface SubmitButtonProps extends ButtonProps {
+  loading?: boolean;
+}
+
+const SubmitButton = forwardRef<HTMLButtonElement, SubmitButtonProps>(
+  ({ className, loading, children, ...props }, ref) => {
     const { pending } = useFormStatus();
+    const isPending = pending || loading;
     return (
       <LoadingButton
         ref={ref}
         {...props}
-        loading={pending}
+        loading={isPending}
         className={className}
       >
         {children}
