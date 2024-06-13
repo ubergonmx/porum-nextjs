@@ -41,7 +41,7 @@ export default async function Home() {
             </div>
           ) : (
             <div className="flex flex-col gap-2">
-              <Button>
+              <Button asChild>
                 <Link href={"/login"}>Log In</Link>
               </Button>
               <div>
