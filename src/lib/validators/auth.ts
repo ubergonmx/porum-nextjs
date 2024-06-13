@@ -10,6 +10,9 @@ export const signupSchema = z.object({
     })
     .max(255, {
       message: "First name must not be more than 255 characters long",
+    })
+    .regex(/^[a-zA-Z\s]*$/, {
+      message: "First name must only contain letters and spaces",
     }),
   lastName: z
     .string({ required_error: "Last name is required" })
@@ -19,6 +22,9 @@ export const signupSchema = z.object({
     })
     .max(255, {
       message: "Last name must not be more than 255 characters long",
+    })
+    .regex(/^[a-zA-Z\s]*$/, {
+      message: "First name must only contain letters and spaces",
     }),
   username: z
     .string({ required_error: "Username is required" })
@@ -28,6 +34,9 @@ export const signupSchema = z.object({
     })
     .max(255, {
       message: "Username must not be more than 255 characters long",
+    })
+    .regex(/^[a-zA-Z0-9]*$/, {
+      message: "Username must only contain letters and numbers",
     }),
   email: z
     .string({ required_error: "Email is required" })
