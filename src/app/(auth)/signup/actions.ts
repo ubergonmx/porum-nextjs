@@ -19,6 +19,7 @@ export async function signup(
   values: SignupInput,
   formData: FormData,
 ): Promise<ActionResponse<SignupInput>> {
+  let signupCompleted = false;
   try {
     const { success } = await standardRateLimit.limit(getIP() ?? values.email);
 
@@ -107,11 +108,17 @@ export async function signup(
       sessionCookie.value,
       sessionCookie.attributes,
     );
-    redirect(Paths.Home);
+    signupCompleted = true;
   } catch (e) {
     console.error(e);
     return {
       formError: "An error occurred",
     };
+  } finally {
+    if (signupCompleted) {
+      redirect(Paths.Home);
+    }
+    // eslint-disable-next-line no-unsafe-finally
+    return {};
   }
 }
