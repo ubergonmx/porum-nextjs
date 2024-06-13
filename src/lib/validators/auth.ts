@@ -54,3 +54,24 @@ export const signupSchema = z.object({
 });
 
 export type SignupInput = z.infer<typeof signupSchema>;
+
+export const loginSchema = z.object({
+  email: z
+    .string({ required_error: "Email is required" })
+    .trim()
+    .min(3, {
+      message: "Email must be at least 3 characters",
+    })
+    .max(254, { message: "Email must not be more than 254 characters long" })
+    .regex(
+      /^[a-zA-Z0-9_+&*-]+(?:\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, // According to OWASP
+      {
+        message: "Invalid email address",
+      },
+    ),
+  password: z
+    .string()
+    .min(8, { message: "Password must be at least 8 characters" }),
+});
+
+export type LoginInput = z.infer<typeof loginSchema>;
