@@ -10,6 +10,8 @@ import {
 import { validateRequest } from "@/lib/auth/validate-requests";
 import { APP_TITLE } from "@/lib/constants";
 import Link from "next/link";
+import { logout } from "./_header/actions";
+import { SubmitButton } from "@/components/submit-button";
 
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
@@ -33,6 +35,9 @@ export default async function Home() {
               <Button variant="outline" disabled>
                 Go to discussions
               </Button>
+              <form action={logout}>
+                <SubmitButton className="w-full">Log Out</SubmitButton>
+              </form>
             </div>
           ) : (
             <div className="flex flex-col gap-2">
