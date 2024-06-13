@@ -12,12 +12,15 @@ import { APP_TITLE } from "@/lib/constants";
 import Link from "next/link";
 import { logout } from "./_header/actions";
 import { SubmitButton } from "@/components/submit-button";
+import Image from "next/image";
 
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
 
 export default async function Home() {
   const { user } = await validateRequest();
+
+  const avatarURL = user ? `/avatars/${user.avatar}` : "/avatars/default.png";
 
   return (
     <div className="pt:mt-0 mx-auto flex flex-col items-center justify-center px-6 pt-8 dark:bg-gray-900 md:h-screen">
@@ -28,14 +31,21 @@ export default async function Home() {
         </CardHeader>
         <CardContent>
           {user ? (
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col items-center gap-2">
+              <Image
+                src={avatarURL}
+                alt="avatar"
+                width={64}
+                height={64}
+                className="size-20 rounded-full object-cover"
+              />
               <p className="text-center text-sm text-muted-foreground">
                 You&apos;re all set!
               </p>
-              <Button variant="outline" disabled>
+              <Button variant="outline" className="w-full" disabled>
                 Go to discussions
               </Button>
-              <form action={logout}>
+              <form action={logout} className="w-full">
                 <SubmitButton className="w-full">Log Out</SubmitButton>
               </form>
             </div>
