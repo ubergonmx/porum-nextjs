@@ -1,6 +1,9 @@
 // import { isValidPhoneNumber } from "react-phone-number-input";
 import { z } from "zod";
 
+const MAX_FILE_SIZE = 1024 * 1024 * 5;
+const ACCEPTED_IMAGE_TYPES = ["image/png", "image/jpeg"];
+
 export const signupSchema = z.object({
   firstName: z
     .string({ required_error: "First name is required" })
@@ -60,9 +63,30 @@ export const signupSchema = z.object({
     .regex(/^(09|\+639)\d{9}$/, {
       message: "Invalid phone number",
     }),
-  avatar: z.instanceof(File, {
-    message: "Must be a valid png/jpg and less than 1 mb",
-  }),
+  avatar: z
+    .instanceof(File)
+    .optional()
+    .refine((file) => file!.size <= MAX_FILE_SIZE, `Max image size is 5MB`)
+    .refine(
+      (file) => ACCEPTED_IMAGE_TYPES.includes(file!.type),
+      "Must be PNG or JPEG",
+    )
+    .refine(async (file) => {
+      // Check Magic Number
+      const arrayBuffer = await file!.arrayBuffer();
+      const byteArray = new Uint8Array(arrayBuffer);
+
+      const jpgMagicNumbers = [0xff, 0xd8, 0xff];
+      const pngMagicNumbers = [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a];
+
+      const isJPEG = jpgMagicNumbers.every(
+        (byte, index) => byteArray[index] === byte,
+      );
+      const isPNG = pngMagicNumbers.every(
+        (byte, index) => byteArray[index] === byte,
+      );
+      return isJPEG || isPNG;
+    }, "Must be PNG or JPEG"),
 });
 
 export type SignupInput = z.infer<typeof signupSchema>;

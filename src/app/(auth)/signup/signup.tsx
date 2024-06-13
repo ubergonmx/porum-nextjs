@@ -28,6 +28,7 @@ import { SubmitButton } from "@/components/submit-button";
 import Link from "next/link";
 import { signupSchema, SignupInput } from "@/lib/validators/auth";
 import { signup } from "./actions";
+import Image from "next/image";
 
 import { APP_TITLE } from "@/lib/constants";
 type FormFieldKey =
@@ -41,7 +42,8 @@ type FormFieldKey =
 export default function Signup() {
   const [isPending, startTransition] = useTransition();
   const [signupError, setSignupError] = useState<string | null>(null);
-  // const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarURL, setAvatarURL] = useState<string>("/avatars/default.png");
 
   const form = useForm<SignupInput>({
     resolver: zodResolver(signupSchema),
@@ -59,7 +61,13 @@ export default function Signup() {
   function onSubmit(values: SignupInput) {
     startTransition(() => {
       setSignupError(null);
-      signup(values).then((result) => {
+      // get avatar and convert to FormData
+      const formData = new FormData();
+      if (values.avatar) {
+        formData.append("avatar", values.avatar);
+      }
+      delete values.avatar;
+      signup(values, formData).then((result) => {
         if (result?.fieldError) {
           Object.entries(result.fieldError).forEach(([field, message]) => {
             form.setError(field as FormFieldKey, {
@@ -73,54 +81,6 @@ export default function Signup() {
     });
   }
 
-  async function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
-    // Clear errors
-    form.clearErrors("avatar");
-
-    // Verify image
-    const selectedFile = event.target.files?.[0];
-    if (selectedFile) {
-      if (selectedFile.size > 1024 * 1024) {
-        // If file size is greater than 1MB
-        form.setError("avatar", {
-          type: "manual",
-          message: "File size is too large! Must be less than 1MB.",
-        });
-        return;
-      } else if (!["image/png", "image/jpeg"].includes(selectedFile.type)) {
-        // If file type is not PNG or JPEG
-        form.setError("avatar", {
-          type: "manual",
-          message: "File type not supported! Must be PNG or JPEG.",
-        });
-        return;
-      }
-
-      // Check Magic Number
-      const arrayBuffer = await selectedFile.arrayBuffer();
-      const byteArray = new Uint8Array(arrayBuffer);
-
-      const jpgMagicNumbers = [0xff, 0xd8, 0xff];
-      const pngMagicNumbers = [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a];
-
-      const isJPEG = jpgMagicNumbers.every(
-        (byte, index) => byteArray[index] === byte,
-      );
-      const isPNG = pngMagicNumbers.every(
-        (byte, index) => byteArray[index] === byte,
-      );
-
-      if (!(isJPEG || isPNG)) {
-        form.setError("avatar", {
-          type: "manual",
-          message: "Invalid file type! Must be PNG or JPEG.",
-        });
-      }
-
-      // setAvatarFile(selectedFile);
-    }
-  }
-
   return (
     <div className="pt:mt-0 mx-auto flex flex-col items-center justify-center px-6 pt-8 dark:bg-gray-900 md:h-screen">
       <Card className="w-full max-w-md">
@@ -131,23 +91,46 @@ export default function Signup() {
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
-              <FormField
-                control={form.control}
-                name="avatar"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Avatar</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="file"
-                        accept="image/png, image/jpeg"
-                        onChange={handleFileChange}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className="flex gap-4">
+                <Image
+                  src={avatarURL}
+                  alt={avatarFile?.name || "Default Avatar"}
+                  width={64}
+                  height={64}
+                  className="size-20 rounded-full object-cover"
+                  onError={(e) => {
+                    setAvatarURL("/avatars/default.png");
+                  }}
+                />
+                <FormField
+                  control={form.control}
+                  name="avatar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Avatar</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="file"
+                          accept="image/png, image/jpeg"
+                          onChange={(e) => {
+                            field.onChange(e.target.files?.[0]);
+                            setAvatarFile(e.target.files?.[0] || null);
+                            setAvatarURL(
+                              URL.createObjectURL(
+                                e.target.files?.[0] || new Blob(),
+                              ),
+                            );
+                          }}
+                          onBlur={field.onBlur}
+                          name={field.name}
+                          ref={field.ref}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
               <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={form.control}

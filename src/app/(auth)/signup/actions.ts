@@ -4,19 +4,24 @@ import { signupSchema, SignupInput } from "@/lib/validators/auth";
 import { database as db } from "@/db/database";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { Scrypt } from "lucia";
+import { Scrypt, generateIdFromEntropySize } from "lucia";
 import { users } from "@/db/schema";
 import { lucia } from "@/lib/auth";
 import { Paths } from "@/lib/constants";
 import { ActionResponse } from "@/lib/types";
+import { writeFile as fsWriteFile } from "fs/promises";
+import { env } from "@/env";
 // import { argon2idConfig } from "@/lib/auth/hash";
 // import { Argon2id } from "oslo/password";
 
 export async function signup(
   values: SignupInput,
+  formData: FormData,
 ): Promise<ActionResponse<SignupInput>> {
   try {
-    const parsed = signupSchema.safeParse(values);
+    const obj = Object.fromEntries(formData.entries());
+    values.avatar = obj.avatar as File;
+    const parsed = await signupSchema.safeParseAsync(values);
     if (!parsed.success) {
       const err = parsed.error.flatten();
       return {
@@ -27,11 +32,12 @@ export async function signup(
           email: err.fieldErrors.email?.[0],
           password: err.fieldErrors.password?.[0],
           phone: err.fieldErrors.phone?.[0],
+          avatar: err.fieldErrors.avatar?.[0],
         },
       };
     }
 
-    const { firstName, lastName, username, email, password, phone } =
+    const { firstName, lastName, username, email, password, phone, avatar } =
       parsed.data;
 
     const existingUsername = await db.query.users.findFirst({
@@ -60,6 +66,16 @@ export async function signup(
       };
     }
 
+    let filename: string | undefined;
+    if (avatar) {
+      if (env.STORAGE === "local") {
+        filename = `${Date.now()}-${generateIdFromEntropySize(5)}-${avatar.name.replaceAll(" ", "_")}`;
+        const buffer = Buffer.from(await avatar.arrayBuffer());
+        const fullPath = process.cwd() + "/" + env.LOCAL_AVATAR_PATH + filename;
+        await fsWriteFile(fullPath, buffer);
+      }
+    }
+
     const hashedPassword = await new Scrypt().hash(password);
     const [user] = await db
       .insert(users)
@@ -71,11 +87,9 @@ export async function signup(
         password: hashedPassword,
         phoneNumber: phone,
         role: "user",
+        avatar: filename,
       })
       .returning();
-
-    // const verificationCode = await generateEmailVerificationCode(user.id, email);
-    // await sendMail(email, EmailTemplate.EmailVerification, { code: verificationCode });
 
     const session = await lucia.createSession(user.id, {});
     const sessionCookie = lucia.createSessionCookie(session.id);
