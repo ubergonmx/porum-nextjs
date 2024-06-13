@@ -7,19 +7,12 @@ import { redirect } from "next/navigation";
 import { Scrypt } from "lucia";
 import { lucia } from "@/lib/auth";
 import { Paths } from "@/lib/constants";
-
-export interface ActionResponse<T> {
-  fieldError?: Partial<Record<keyof T, string | undefined>>;
-  formError?: string;
-}
+import { ActionResponse } from "@/lib/types";
 
 export async function login(
-  _: any,
-  formData: FormData,
+  values: LoginInput,
 ): Promise<ActionResponse<LoginInput>> {
-  const obj = Object.fromEntries(formData.entries());
-
-  const parsed = loginSchema.safeParse(obj);
+  const parsed = loginSchema.safeParse(values);
   if (!parsed.success) {
     const err = parsed.error.flatten();
     return {
@@ -34,28 +27,24 @@ export async function login(
 
   const existingUser = await db.query.users.findFirst({
     where: (table, { eq }) => eq(table.email, email),
-    columns: { id: true, email: true, password: true, role: true },
   });
 
   if (!existingUser) {
     return {
-      formError: "Wrong email or password",
+      formError: "Incorrect email or password",
     };
   }
 
-  // Check if the password is correct
   const validPassword = await new Scrypt().verify(
-    password,
     existingUser.password,
+    password,
   );
-
   if (!validPassword) {
     return {
-      formError: "Wrong email or password",
+      formError: "Incorrect email or password",
     };
   }
 
-  // Login the user and create a session
   const session = await lucia.createSession(existingUser.id, {});
   const sessionCookie = lucia.createSessionCookie(session.id);
   cookies().set(
@@ -66,7 +55,6 @@ export async function login(
 
   if (existingUser.role === "admin") {
     return redirect(Paths.AdminDashboard);
-  } else {
-    return redirect(Paths.Home);
   }
+  return redirect(Paths.Home);
 }

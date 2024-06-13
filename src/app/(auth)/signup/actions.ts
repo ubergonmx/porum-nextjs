@@ -8,13 +8,9 @@ import { Scrypt } from "lucia";
 import { users } from "@/db/schema";
 import { lucia } from "@/lib/auth";
 import { Paths } from "@/lib/constants";
+import { ActionResponse } from "@/lib/types";
 // import { argon2idConfig } from "@/lib/auth/hash";
 // import { Argon2id } from "oslo/password";
-
-export interface ActionResponse<T> {
-  fieldError?: Partial<Record<keyof T, string | undefined>>;
-  formError?: string;
-}
 
 export async function signup(
   values: SignupInput,
@@ -35,9 +31,8 @@ export async function signup(
       };
     }
 
-    const { firstName, lastName, username, email, password, phone } = values;
-
-    console.log(phone);
+    const { firstName, lastName, username, email, password, phone } =
+      parsed.data;
 
     const existingUsername = await db.query.users.findFirst({
       where: (table, { eq }) => eq(table.username, username),
@@ -45,7 +40,6 @@ export async function signup(
     });
 
     if (existingUsername) {
-      console.log("existingUsername", existingUsername);
       return {
         fieldError: {
           username: "Username already exists",
@@ -59,7 +53,6 @@ export async function signup(
     });
 
     if (existingEmail) {
-      console.log("existingEmail", existingEmail);
       return {
         fieldError: {
           email: "Cannot create account with that email",
@@ -91,7 +84,7 @@ export async function signup(
       sessionCookie.value,
       sessionCookie.attributes,
     );
-    return redirect(Paths.Home);
+    redirect(Paths.Home);
   } catch (e) {
     console.error(e);
     return {
