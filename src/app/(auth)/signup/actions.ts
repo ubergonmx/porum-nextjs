@@ -11,8 +11,7 @@ import { Paths } from "@/lib/constants";
 import { ActionResponse } from "@/lib/types";
 import { writeFile as fsWriteFile } from "fs/promises";
 import { env } from "@/env";
-import { standardRateLimit } from "@/lib/ratelimit";
-import { getIP } from "@/lib/utils";
+import { standardRateLimit, getIP } from "@/lib/ratelimit";
 // import { argon2idConfig } from "@/lib/auth/hash";
 // import { Argon2id } from "oslo/password";
 

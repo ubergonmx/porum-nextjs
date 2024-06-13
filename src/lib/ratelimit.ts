@@ -1,5 +1,6 @@
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
+import { headers } from "next/headers";
 
 // Allow 3 requests per 5 minutes
 export const loginRateLimit = new Ratelimit({
@@ -21,3 +22,12 @@ export const standardRateLimit = new Ratelimit({
   analytics: true,
   prefix: "@upstash/ratelimit",
 });
+
+export function getIP() {
+  const forwardedFor = headers().get("x-forwarded-for");
+  const realIP = headers().get("x-real-ip");
+
+  if (forwardedFor) return forwardedFor.split(",")[0].trim();
+  if (realIP) return realIP.trim();
+  return headers().get("remote-addr");
+}

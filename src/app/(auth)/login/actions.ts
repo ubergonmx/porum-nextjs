@@ -8,8 +8,7 @@ import { Scrypt } from "lucia";
 import { lucia } from "@/lib/auth";
 import { Paths } from "@/lib/constants";
 import { ActionResponse } from "@/lib/types";
-import { loginRateLimit } from "@/lib/ratelimit";
-import { getIP } from "@/lib/utils";
+import { loginRateLimit, getIP } from "@/lib/ratelimit";
 
 export async function login(
   values: LoginInput,
