@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/popover";
 
 import { cn } from "@/lib/utils";
-import { ScrollArea } from "./scroll-area";
+import { ScrollArea } from "./ui/scroll-area";
 
 type PhoneInputProps = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
