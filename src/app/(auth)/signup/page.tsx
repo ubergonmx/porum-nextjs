@@ -1,16 +1,9 @@
-import SignUpForm from "./signupform";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import SignUp from "./signup";
 import { validateRequest } from "@/lib/auth/validate-requests";
-import { APP_TITLE, Paths } from "@/lib/constants";
+import { Paths } from "@/lib/constants";
 import { redirect } from "next/navigation";
 
-export default async function SignUp() {
+export default async function SignupPage() {
   const { user } = await validateRequest();
 
   if (user) {
@@ -21,17 +14,5 @@ export default async function SignUp() {
     }
   }
 
-  return (
-    <div className="pt:mt-0 mx-auto flex flex-col items-center justify-center px-6 pt-8 dark:bg-gray-900 md:h-screen">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <CardTitle>{APP_TITLE} Sign Up</CardTitle>
-          <CardDescription>Sign up to start using the app</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <SignUpForm />
-        </CardContent>
-      </Card>
-    </div>
-  );
+  return <SignUp />;
 }
