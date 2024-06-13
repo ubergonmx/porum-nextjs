@@ -12,6 +12,8 @@ export const env = createEnv({
     LOCAL_AVATAR_PATH: z.string().min(1),
     LOCAL_STORAGE_PATH: z.string().min(1),
     CREATE_ADMIN: z.enum(["true", "false"]).transform((v) => v === "true"),
+    UPSTASH_REDIS_REST_URL: z.string().url(),
+    UPSTASH_REDIS_REST_TOKEN: z.string().min(1),
   },
   client: {},
   runtimeEnv: {
@@ -22,5 +24,7 @@ export const env = createEnv({
     LOCAL_AVATAR_PATH: process.env.LOCAL_AVATAR_PATH,
     LOCAL_STORAGE_PATH: process.env.LOCAL_STORAGE_PATH,
     CREATE_ADMIN: process.env.CREATE_ADMIN,
+    UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
+    UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
   },
 });

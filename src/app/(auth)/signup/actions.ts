@@ -11,6 +11,8 @@ import { Paths } from "@/lib/constants";
 import { ActionResponse } from "@/lib/types";
 import { writeFile as fsWriteFile } from "fs/promises";
 import { env } from "@/env";
+import { standardRateLimit } from "@/lib/ratelimit";
+import { getIP } from "@/lib/utils";
 // import { argon2idConfig } from "@/lib/auth/hash";
 // import { Argon2id } from "oslo/password";
 
@@ -19,6 +21,14 @@ export async function signup(
   formData: FormData,
 ): Promise<ActionResponse<SignupInput>> {
   try {
+    const { success } = await standardRateLimit.limit(getIP() ?? values.email);
+
+    if (!success) {
+      return {
+        formError: "Unable to process this time",
+      };
+    }
+
     const obj = Object.fromEntries(formData.entries());
     values.avatar = obj.avatar as File;
     const parsed = await signupSchema.safeParseAsync(values);

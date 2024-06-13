@@ -8,10 +8,20 @@ import { Scrypt } from "lucia";
 import { lucia } from "@/lib/auth";
 import { Paths } from "@/lib/constants";
 import { ActionResponse } from "@/lib/types";
+import { loginRateLimit } from "@/lib/ratelimit";
+import { getIP } from "@/lib/utils";
 
 export async function login(
   values: LoginInput,
 ): Promise<ActionResponse<LoginInput>> {
+  const { success } = await loginRateLimit.limit(getIP() ?? values.email);
+
+  if (!success) {
+    return {
+      formError: "Too many requests, please try again later",
+    };
+  }
+
   const parsed = loginSchema.safeParse(values);
   if (!parsed.success) {
     const err = parsed.error.flatten();
