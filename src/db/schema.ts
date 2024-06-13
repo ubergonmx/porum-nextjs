@@ -30,9 +30,7 @@ export const users = pgTable(
     createdAt: timestamp("created_at", {
       mode: "date",
       withTimezone: true,
-    })
-      .notNull()
-      .defaultNow(),
+    }).defaultNow(),
     updatedAt: timestamp("updated_at", {
       mode: "date",
       withTimezone: true,

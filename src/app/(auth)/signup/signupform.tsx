@@ -2,7 +2,6 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -19,97 +18,64 @@ import { PhoneInput } from "@/components/ui/phone-input";
 import { PasswordInput } from "@/components/password-input";
 import { SubmitButton } from "@/components/submit-button";
 import Link from "next/link";
-import { isValidPhoneNumber } from "react-phone-number-input";
-
-const formSchema = z.object({
-  firstName: z
-    .string({ required_error: "First name is required" })
-    .trim()
-    .min(1, {
-      message: "First name must be at least 1 character",
-    })
-    .max(255, {
-      message: "First name must not be more than 255 characters long",
-    }),
-  lastName: z
-    .string({ required_error: "Last name is required" })
-    .trim()
-    .min(1, {
-      message: "First name must be at least 1 character",
-    })
-    .max(255, {
-      message: "Last name must not be more than 255 characters long",
-    }),
-  username: z
-    .string({ required_error: "Username is required" })
-    .trim()
-    .min(3, {
-      message: "Username must be at least 3 characters",
-    })
-    .max(255, {
-      message: "Username must not be more than 255 characters long",
-    }),
-  email: z
-    .string({ required_error: "Email is required" })
-    .trim()
-    .min(3, {
-      message: "Email must be at least 3 characters",
-    })
-    .max(255, { message: "Email must not be more than 255 characters long" })
-    .email({ message: "Invalid email address" }),
-  password: z
-    .string()
-    .min(8, { message: "Password must be at least 8 characters" }),
-  phone: z
-    .string()
-    .refine(isValidPhoneNumber, { message: "Invalid phone number" }),
-});
+import { useFormState } from "react-dom";
+import { signupSchema, SignupInput } from "@/lib/validators/auth";
+import { signup } from "./actions";
 
 export default function SignUpForm() {
-  // 1. Define your form.
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const [state, formAction] = useFormState(signup, null);
+
+  const form = useForm<SignupInput>({
+    resolver: zodResolver(signupSchema),
     defaultValues: {
+      firstName: "",
+      lastName: "",
       username: "",
+      email: "",
+      password: "",
+      phone: "",
     },
   });
 
-  // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
+  function onSubmit(values: SignupInput) {
     console.log(values);
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
-        <FormField
-          control={form.control}
-          name="firstName"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>First Name</FormLabel>
-              <FormControl>
-                <Input placeholder="Juan" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="lastName"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Last Name</FormLabel>
-              <FormControl>
-                <Input placeholder="Dela Cruz" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        action={formAction}
+        className="space-y-2"
+      >
+        <div className="grid grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="firstName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>First Name</FormLabel>
+                <FormControl>
+                  <Input placeholder="Juan" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="lastName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Last Name</FormLabel>
+                <FormControl>
+                  <Input placeholder="Dela Cruz" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
         <FormField
           control={form.control}
           name="username"
@@ -172,8 +138,27 @@ export default function SignUpForm() {
             </FormItem>
           )}
         />
-
-        <SubmitButton className="w-full"> Sign Up</SubmitButton>
+        {state?.fieldError ? (
+          <ul className="list-disc space-y-1 rounded-lg border bg-destructive/10 p-2 text-[0.8rem] font-medium text-destructive">
+            {Object.values(state.fieldError).map((err) => (
+              <li className="ml-4" key={err}>
+                {err}
+              </li>
+            ))}
+          </ul>
+        ) : state?.formError ? (
+          <p className="rounded-lg border bg-destructive/10 p-2 text-[0.8rem] font-medium text-destructive">
+            {state?.formError}
+          </p>
+        ) : null}
+        <div>
+          <Link href={"/login"}>
+            <span className="p-0 text-xs font-medium underline-offset-4 hover:underline">
+              Already signed up? Login instead.
+            </span>
+          </Link>
+        </div>
+        <SubmitButton className="w-full">Sign Up</SubmitButton>
         <Button variant="outline" className="w-full" asChild>
           <Link href="/">Cancel</Link>
         </Button>
