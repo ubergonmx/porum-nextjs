@@ -1,4 +1,4 @@
-import { Lucia, TimeSpan } from "lucia";
+import { Lucia, TimeSpan, Scrypt } from "lucia";
 import { DrizzlePostgreSQLAdapter } from "@lucia-auth/adapter-drizzle";
 import { env } from "@/env";
 import { sessions, users, type User as DbUser } from "@/db/schema";
@@ -41,4 +41,37 @@ declare module "lucia" {
     DatabaseSessionAttributes: DatabaseSessionAttributes;
     DatabaseUserAttributes: DatabaseUserAttributes;
   }
+}
+
+async function createAdminUser() {
+  const existingAdmin = await db.query.users.findFirst({
+    where: (table, { eq }) => eq(table.role, "admin"),
+    columns: { id: true },
+  });
+  if (existingAdmin) {
+    console.log("Admin user already exists");
+    return;
+  }
+
+  const firstName = "Admin";
+  const lastName = "User";
+  const username = "admin";
+  const email = "admin@example.com";
+  const password = "a6509314aeb22d38";
+  const hashedPassword = await new Scrypt().hash(password);
+
+  await db.insert(users).values({
+    firstName,
+    lastName,
+    username,
+    email,
+    password: hashedPassword,
+    role: "admin",
+  });
+
+  console.log("Admin user created successfully");
+}
+
+if (env.CREATE_ADMIN) {
+  createAdminUser().catch(console.error);
 }
