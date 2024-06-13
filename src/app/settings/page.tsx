@@ -32,7 +32,7 @@ export default function Dashboard() {
             className="flex items-center gap-2 text-lg font-semibold md:text-base"
           >
             <Package2 className="size-6" />
-            <span className="sr-only">Acme Inc</span>
+            <span className="sr-only">Porum</span>
           </Link>
           <Link
             href="#"
@@ -83,7 +83,7 @@ export default function Dashboard() {
                 className="flex items-center gap-2 text-lg font-semibold"
               >
                 <Package2 className="size-6" />
-                <span className="sr-only">Acme Inc</span>
+                <span className="sr-only">Porum</span>
               </Link>
               <Link
                 href="#"
@@ -157,10 +157,6 @@ export default function Dashboard() {
               General
             </Link>
             <Link href="#">Security</Link>
-            <Link href="#">Integrations</Link>
-            <Link href="#">Support</Link>
-            <Link href="#">Organizations</Link>
-            <Link href="#">Advanced</Link>
           </nav>
           <div className="grid gap-6">
             <Card x-chunk="dashboard-04-chunk-1">
@@ -181,31 +177,50 @@ export default function Dashboard() {
             </Card>
             <Card x-chunk="dashboard-04-chunk-2">
               <CardHeader>
-                <CardTitle>Plugins Directory</CardTitle>
+                <CardTitle>Avatar</CardTitle>
                 <CardDescription>
-                  The directory within your project, in which your plugins are
-                  located.
+                  Upload your avatar here! This is your user avatar shown to
+                  others in Porum.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form className="flex flex-col gap-4">
+                  <Input type="file" accept="image/png, image/jpeg" />
+                </form>
+              </CardContent>
+              <CardFooter className="border-t px-6 py-4">
+                <Button>Save</Button>
+              </CardFooter>
+            </Card>
+            <Card x-chunk="dashboard-04-chunk-3">
+              <CardHeader>
+                <CardTitle>Delete my account</CardTitle>
+                <CardDescription>
+                  Permanently delete your account and all associated data.
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <form className="flex flex-col gap-4">
                   <Input
-                    placeholder="Project Name"
-                    defaultValue="/content/plugins"
+                    id="delete-account-pwd"
+                    placeholder="Type your password to confirm"
                   />
+
                   <div className="flex items-center space-x-2">
-                    <Checkbox id="include" defaultChecked />
+                    <Checkbox id="delete-account" />
                     <label
-                      htmlFor="include"
+                      htmlFor="delete-account"
                       className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                     >
-                      Allow administrators to change the directory.
+                      I understand that this action is irreversible.
                     </label>
                   </div>
                 </form>
               </CardContent>
               <CardFooter className="border-t px-6 py-4">
-                <Button>Save</Button>
+                <Button variant="destructive" disabled>
+                  Delete Account
+                </Button>
               </CardFooter>
             </Card>
           </div>
