@@ -26,9 +26,9 @@ export default async function Home() {
         </CardHeader>
         <CardContent>
           {user ? (
-            <div>
+            <div className="flex flex-col gap-2">
               <p className="text-center text-sm text-muted-foreground">
-                Dive in!
+                You&apos;re all set!
               </p>
               <Button variant="outline" disabled>
                 Go to discussions
