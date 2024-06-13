@@ -41,7 +41,9 @@ export default async function Home() {
             </div>
           ) : (
             <div className="flex flex-col gap-2">
-              <Button>Log In</Button>
+              <Button>
+                <Link href={"/login"}>Log In</Link>
+              </Button>
               <div>
                 <Link href={"/signup"}>
                   <span className="float-end p-0 text-xs font-medium underline-offset-4 hover:underline">
