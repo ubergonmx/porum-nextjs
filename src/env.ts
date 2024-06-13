@@ -4,12 +4,14 @@ import { z } from "zod";
 export const env = createEnv({
   server: {
     DATABASE_URL: z.string().url(),
-    NODE_ENV: z.string().min(1),
+    NODE_ENV: z
+      .enum(["development", "test", "production"])
+      .default("development"),
     SECRET_HASH: z.string().min(1),
-    STORAGE: z.string().min(1),
+    STORAGE: z.enum(["local", "online"]).default("local"),
     LOCAL_AVATAR_PATH: z.string().min(1),
     LOCAL_STORAGE_PATH: z.string().min(1),
-    CREATE_ADMIN: z.boolean(),
+    CREATE_ADMIN: z.enum(["true", "false"]).transform((v) => v === "true"),
   },
   client: {},
   runtimeEnv: {
