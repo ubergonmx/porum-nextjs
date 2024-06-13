@@ -60,6 +60,9 @@ export const signupSchema = z.object({
     .regex(/^(09|\+639)\d{9}$/, {
       message: "Invalid phone number",
     }),
+  avatar: z.instanceof(File, {
+    message: "Must be a valid png/jpg and less than 1 mb",
+  }),
 });
 
 export type SignupInput = z.infer<typeof signupSchema>;
