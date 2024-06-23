@@ -1,4 +1,4 @@
-// import { isValidPhoneNumber } from "react-phone-number-input";
+import { isValidPhoneNumber } from "react-phone-number-input";
 import { z } from "zod";
 
 const MAX_FILE_SIZE = 1024 * 1024 * 5;
@@ -59,10 +59,10 @@ export const signupSchema = z.object({
     .min(8, { message: "Password must be at least 8 characters" }),
   phone: z
     .string()
-    // .refine(isValidPhoneNumber, { message: "Invalid phone number" }),
-    .regex(/^(09|\+639)\d{9}$/, {
-      message: "Invalid phone number",
-    }),
+    .refine(isValidPhoneNumber, { message: "Invalid phone number" }),
+  // .regex(/^(09|\+639)\d{9}$/, {
+  //   message: "Invalid phone number",
+  // }),
   avatar: z
     .instanceof(File)
     .optional()
