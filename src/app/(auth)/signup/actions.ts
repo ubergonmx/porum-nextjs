@@ -12,8 +12,6 @@ import { ActionResponse } from "@/lib/types";
 import { writeFile as fsWriteFile } from "fs/promises";
 import { env } from "@/env";
 import { standardRateLimit, getIP } from "@/lib/ratelimit";
-// import { argon2idConfig } from "@/lib/auth/hash";
-// import { Argon2id } from "oslo/password";
 
 export async function signup(
   values: SignupInput,
