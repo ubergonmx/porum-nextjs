@@ -49,7 +49,7 @@ async function createAdminUser() {
     columns: { id: true },
   });
   if (existingAdmin) {
-    console.log("Admin user already exists");
+    console.log("[DEV] Admin user already exists");
     return;
   }
 
@@ -69,9 +69,9 @@ async function createAdminUser() {
     role: "admin",
   });
 
-  console.log("Admin user created successfully");
+  console.log("[DEV] Admin user created successfully");
 }
 
-if (env.CREATE_ADMIN) {
+if (env.NODE_ENV === "development" && env.CREATE_ADMIN) {
   createAdminUser().catch(console.error);
 }
