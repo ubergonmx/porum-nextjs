@@ -4,10 +4,10 @@ import { z } from "zod";
 const MAX_FILE_SIZE = 1024 * 1024 * 5;
 const ACCEPTED_IMAGE_TYPES = ["image/png", "image/jpeg"];
 
-const EMAIL_REGEX =
-  /^(?!\.)("([^"\r\\]|\\["\r\\])*"|([-a-z0-9!#$%&'*+/=?^_`{|}~]|(?<!\.)\.)*)(?<!\.)@[a-z0-9][\w\\.-]*[a-z0-9]\.[a-z][a-z\\.]*[a-z]$/;
-// const OWASP_EMAIL_REGEX =
-//   /^[a-zA-Z0-9_+&*-]+(?:\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/;
+// const EMAIL_REGEX =
+//   /^(?!\.)("([^"\r\\]|\\["\r\\])*"|([-a-z0-9!#$%&'*+/=?^_`{|}~]|(?<!\.)\.)*)(?<!\.)@[a-z0-9][\w\\.-]*[a-z0-9]\.[a-z][a-z\\.]*[a-z]$/;
+const OWASP_EMAIL_REGEX =
+  /^[a-zA-Z0-9_+&*-]+(?:\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/;
 
 const checkEmailLength = (email: string) => {
   const [localPart, domainPart] = email.split("@");
@@ -63,7 +63,7 @@ export const signupSchema = z.object({
     .min(3, {
       message: "Email must be at least 3 characters",
     })
-    .regex(EMAIL_REGEX, {
+    .regex(OWASP_EMAIL_REGEX, {
       message: "Invalid email address",
     })
     .refine(checkEmailLength, {
@@ -117,7 +117,7 @@ export const loginSchema = z.object({
     .min(3, {
       message: "Email must be at least 3 characters",
     })
-    .regex(EMAIL_REGEX, {
+    .regex(OWASP_EMAIL_REGEX, {
       message: "Invalid email address",
     })
     .refine(checkEmailLength, {
