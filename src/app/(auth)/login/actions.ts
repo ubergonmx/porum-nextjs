@@ -4,11 +4,12 @@ import { loginSchema, LoginInput } from "@/lib/validators/auth";
 import { database as db } from "@/db/database";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { Scrypt } from "lucia";
 import { lucia } from "@/lib/auth";
 import { Paths } from "@/lib/constants";
 import { ActionResponse } from "@/lib/types";
 import { loginRateLimit, getIP } from "@/lib/ratelimit";
+import { verify } from "@node-rs/argon2";
+import { argon2idConfig } from "@/lib/auth/hash";
 
 export async function login(
   values: LoginInput,
@@ -44,9 +45,10 @@ export async function login(
     };
   }
 
-  const validPassword = await new Scrypt().verify(
+  const validPassword = await verify(
     existingUser.password,
     password,
+    argon2idConfig,
   );
   if (!validPassword) {
     return {
