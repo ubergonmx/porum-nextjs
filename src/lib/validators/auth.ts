@@ -1,4 +1,3 @@
-import { isValidPhoneNumber } from "react-phone-number-input";
 import { z } from "zod";
 
 const MAX_FILE_SIZE = 1024 * 1024 * 5;
@@ -72,12 +71,16 @@ export const signupSchema = z.object({
   password: z
     .string()
     .min(8, { message: "Password must be at least 8 characters" }),
-  phone: z
-    .string()
-    .refine(isValidPhoneNumber, { message: "Invalid phone number" }),
-  // .regex(/^(09|\+639)\d{9}$/, {
-  //   message: "Invalid phone number",
-  // }),
+  phone: z.string().refine(
+    async (phone) => {
+      // Used dynamic import because it causes the following error in server-side:
+      // TypeError: Super expression must either be null or a function
+      const isValidPhoneNumber = (await import("react-phone-number-input"))
+        .isValidPhoneNumber;
+      return isValidPhoneNumber(phone);
+    },
+    { message: "Invalid phone number" },
+  ),
   avatar: z
     .instanceof(File)
     .optional()
