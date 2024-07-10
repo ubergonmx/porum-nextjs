@@ -4,7 +4,7 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
-1. Duplicate `.env.example` and rename to `.env`.
+1. Duplicate `.env.example` and rename to `.env` (fill the necessary fields).
 
 2. Install dependencies.
 
