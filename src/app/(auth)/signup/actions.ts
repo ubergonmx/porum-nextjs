@@ -41,7 +41,6 @@ export async function signup(
         username: err.fieldErrors.username?.[0],
         email: err.fieldErrors.email?.[0],
         password: err.fieldErrors.password?.[0],
-        // phone: err.fieldErrors.phone?.[0], Check auth validator
         avatar: err.fieldErrors.avatar?.[0],
       },
     };
