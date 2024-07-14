@@ -132,3 +132,19 @@ export const loginSchema = z.object({
 });
 
 export type LoginInput = z.infer<typeof loginSchema>;
+
+export const forgotPasswordSchema = z.object({
+  email: z
+    .string({ required_error: "Email is required" })
+    .trim()
+    .min(3, {
+      message: "Email must be at least 3 characters",
+    })
+    .regex(OWASP_EMAIL_REGEX, {
+      message: "Invalid email address",
+    })
+    .refine(checkEmailLength, {
+      message: "Local part and domain part must be 64 and 255 bytes or less",
+    }),
+});
+export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
