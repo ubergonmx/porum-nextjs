@@ -119,3 +119,27 @@ export const posts = pgTable(
 
 export type Post = typeof posts.$inferSelect;
 export type NewPost = typeof posts.$inferInsert;
+
+export const comments = pgTable(
+  "comments",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => generateIdFromEntropySize(10)),
+    userId: text("user_id").notNull(),
+    postId: text("post_id").notNull(),
+    content: text("content").notNull(),
+    createdAt: timestamp("created_at", {
+      mode: "date",
+      withTimezone: true,
+    }).defaultNow(),
+  },
+  (t) => ({
+    dateIdx: index("comment_date_idx").on(t.createdAt),
+    userIdx: index("comment_user_idx").on(t.userId),
+    postIdIdx: index("comment_post_idx").on(t.postId),
+  }),
+);
+
+export type Comment = typeof comments.$inferSelect;
+export type NewComment = typeof comments.$inferInsert;
