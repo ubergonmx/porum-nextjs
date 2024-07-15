@@ -128,6 +128,7 @@ export const comments = pgTable(
       .primaryKey()
       .$defaultFn(() => generateIdFromEntropySize(10)),
     userId: text("user_id").notNull(),
+    username: text("username").notNull(),
     postId: text("post_id").notNull(),
     content: text("content").notNull(),
     createdAt: timestamp("created_at", {
