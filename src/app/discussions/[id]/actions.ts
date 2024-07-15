@@ -1,22 +1,24 @@
 "use server";
 
 import { database } from "@/db/database";
-import { Post } from "@/db/schema";
+import { Post, posts } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
 export async function fetchPost(postId: string) {
+  console.log("[fetchPost] postId", postId);
   let post: Post | null = null;
   try {
     const foundPost = await database.query.posts.findFirst({
-      with: {
-        id: postId,
-      },
+      where: eq(posts.id, postId),
     });
+
+    console.log("[foundPost]", foundPost);
 
     if (foundPost) {
       post = foundPost;
-      post.id = postId;
     }
   } catch (err) {
+    console.log("Error fetching post");
     if (err instanceof Error) {
       console.error(err.stack);
     }
