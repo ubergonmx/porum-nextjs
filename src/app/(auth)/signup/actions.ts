@@ -82,6 +82,10 @@ export async function signup(
       const buffer = Buffer.from(await avatar.arrayBuffer());
       const fullPath = process.cwd() + "/" + env.LOCAL_AVATAR_PATH + filename;
       await fsWriteFile(fullPath, buffer);
+
+      if (env.NODE_ENV === "development") {
+        console.log("[DEV] Avatar saved to", fullPath);
+      }
     }
   }
   const hashedPassword = await hash(password, argon2idConfig);
@@ -106,5 +110,10 @@ export async function signup(
     sessionCookie.value,
     sessionCookie.attributes,
   );
+
+  if (env.NODE_ENV === "development") {
+    console.log("[DEV] User created successfully", user);
+  }
+
   return redirect(Paths.Home);
 }

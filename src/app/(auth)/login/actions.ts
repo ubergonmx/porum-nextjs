@@ -65,7 +65,21 @@ export async function login(
   );
 
   if (existingUser.role === "admin") {
+    if (process.env.NODE_ENV === "development") {
+      console.log(
+        new Date().toISOString() + " [DEV] Admin logged in with id:",
+        existingUser.id,
+      );
+    }
     return redirect(Paths.AdminDashboard);
   }
+
+  if (process.env.NODE_ENV === "development") {
+    console.log(
+      new Date().toISOString() + " [DEV] User logged in with id:",
+      existingUser.id,
+    );
+  }
+
   return redirect(Paths.Home);
 }
