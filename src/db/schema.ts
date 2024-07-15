@@ -4,6 +4,7 @@ import {
   text,
   timestamp,
   pgEnum,
+  AnyPgColumn,
 } from "drizzle-orm/pg-core";
 import { DATABASE_PREFIX as prefix } from "@/lib/constants";
 import { generateIdFromEntropySize } from "lucia";
@@ -133,6 +134,7 @@ export const comments = pgTable(
       mode: "date",
       withTimezone: true,
     }).defaultNow(),
+    replyToId: text("reply_to_id").references((): AnyPgColumn => comments.id),
   },
   (t) => ({
     dateIdx: index("comment_date_idx").on(t.createdAt),
@@ -143,3 +145,24 @@ export const comments = pgTable(
 
 export type Comment = typeof comments.$inferSelect;
 export type NewComment = typeof comments.$inferInsert;
+
+export const voteEnum = pgEnum("vote", ["up", "down"]);
+export const votes = pgTable(
+  "votes",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => generateIdFromEntropySize(10)),
+    userId: text("user_id").notNull(),
+    postId: text("post_id").notNull(),
+    vote: voteEnum("vote").notNull(),
+  },
+  (t) => ({
+    userIdx: index("vote_user_idx").on(t.userId),
+    postIdIdx: index("vote_post_idx").on(t.postId),
+    voteIdx: index("vote_idx").on(t.userId, t.postId),
+  }),
+);
+
+export type Vote = typeof votes.$inferSelect;
+export type NewVote = typeof votes.$inferInsert;
