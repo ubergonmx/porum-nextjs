@@ -5,6 +5,24 @@ interface PostFullPageProps {
   post: Post;
 }
 
+function formatTimeToNow(date: Date) {
+  const diff = new Date().getTime() - date.getTime();
+  const seconds = diff / 1000;
+  if (seconds < 60) {
+    return `${Math.floor(seconds)}s`;
+  }
+  const minutes = seconds / 60;
+  if (minutes < 60) {
+    return `${Math.floor(minutes)}m`;
+  }
+  const hours = minutes / 60;
+  if (hours < 24) {
+    return `${Math.floor(hours)}h`;
+  }
+  const days = hours / 24;
+  return `${Math.floor(days)}d`;
+}
+
 const PostFullPage: React.FC<PostFullPageProps> = ({ post }) => {
   return (
     <div className="rounded-md bg-white shadow">
@@ -13,6 +31,9 @@ const PostFullPage: React.FC<PostFullPageProps> = ({ post }) => {
 
         <div className="w-0 flex-1">
           <div className="mt-1 max-h-40 text-xs text-gray-500">
+            {/* Username and date */}
+            <span>Posted by u/{post.username} </span>
+            {post.createdAt && formatTimeToNow(post.createdAt)}
             {/* {subredditName ? (
               <>
                 <a
@@ -27,7 +48,7 @@ const PostFullPage: React.FC<PostFullPageProps> = ({ post }) => {
             <span>Posted by u/{post.author.username}</span>{" "}
             {formatTimeToNow(new Date(post.createdAt))} */}
           </div>
-          <a href={`/post/${post.id}`}>
+          <a href={`/discussions/${post.id}`}>
             <h1 className="py-2 text-lg font-semibold leading-6 text-gray-900">
               {post.title}
             </h1>
@@ -39,9 +60,12 @@ const PostFullPage: React.FC<PostFullPageProps> = ({ post }) => {
               // blur bottom if content is too long
               <div className="absolute bottom-0 left-0 h-24 w-full bg-gradient-to-t from-white to-transparent"></div>
             ) : null} */}
+
+            {post.content}
           </div>
         </div>
       </div>
+      {/* Comments will go here */}
     </div>
   );
 };
