@@ -18,7 +18,7 @@ export default async function CommentsSection({
 
       {/* Create comment editor goes here */}
       <div className="flex flex-col px-4">
-        {user && (
+        {user ? (
           // User can post comments
           <div>
             <h4 className="text-lg font-semibold">Leave a comment</h4>
@@ -26,6 +26,16 @@ export default async function CommentsSection({
               className="w-full rounded-md border border-gray-300 p-2"
               placeholder="Write a comment..."
             ></textarea>
+          </div>
+        ) : (
+          // User must be logged in to post comments
+          <div className="flex flex-col items-center">
+            <p className="text-lg font-semibold">
+              You must be logged in to post a comment
+            </p>
+            <Button className="mt-4" variant="default">
+              Log In
+            </Button>
           </div>
         )}
 
