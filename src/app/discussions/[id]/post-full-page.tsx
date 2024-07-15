@@ -1,8 +1,11 @@
 import React from "react";
 import { Post } from "@/db/schema";
+import { CommentWithUser } from "./actions";
+import CommentsSection from "./comments";
 
 interface PostFullPageProps {
   post: Post;
+  comments: CommentWithUser[];
 }
 
 function formatTimeToNow(date: Date) {
@@ -23,7 +26,7 @@ function formatTimeToNow(date: Date) {
   return `${Math.floor(days)}d`;
 }
 
-const PostFullPage: React.FC<PostFullPageProps> = ({ post }) => {
+const PostFullPage: React.FC<PostFullPageProps> = ({ post, comments }) => {
   return (
     <div className="rounded-md bg-white shadow">
       <div className="flex justify-between px-6 py-4">
@@ -66,6 +69,7 @@ const PostFullPage: React.FC<PostFullPageProps> = ({ post }) => {
         </div>
       </div>
       {/* Comments will go here */}
+      <CommentsSection comments={comments} />
     </div>
   );
 };
