@@ -95,3 +95,27 @@ export const passwordResetTokens = pgTable(
     userIdx: index("password_token_user_idx").on(t.userId),
   }),
 );
+
+export const posts = pgTable(
+  "posts",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => generateIdFromEntropySize(10)),
+    userId: text("user_id").notNull(),
+    username: text("username").notNull(),
+    title: text("title").notNull(),
+    content: text("content"),
+    createdAt: timestamp("created_at", {
+      mode: "date",
+      withTimezone: true,
+    }).defaultNow(),
+  },
+  (t) => ({
+    dateIdx: index("post_date_idx").on(t.createdAt),
+    userIdx: index("post_user_idx").on(t.userId),
+  }),
+);
+
+export type Post = typeof posts.$inferSelect;
+export type NewPost = typeof posts.$inferInsert;
