@@ -1,17 +1,38 @@
 import React from "react";
 import { CommentWithUser } from "./actions";
 import CommentPost from "./comment";
+import { validateRequest } from "@/lib/auth/validate-requests";
+import { Button } from "@/components/ui/button";
 
 interface CommentsSectionProps {
   comments: CommentWithUser[];
 }
 
-export default function CommentsSection({ comments }: CommentsSectionProps) {
+export default async function CommentsSection({
+  comments,
+}: CommentsSectionProps) {
+  const { user } = await validateRequest();
   return (
     <div className="mt-4 flex flex-col gap-y-4 pb-4 pl-4">
       <hr className="my-6 h-px w-full" />
 
       {/* Create comment editor goes here */}
+      <div className="flex flex-col px-4">
+        {user && (
+          // User can post comments
+          <div>
+            <h4 className="text-lg font-semibold">Leave a comment</h4>
+            <textarea
+              className="w-full rounded-md border border-gray-300 p-2"
+              placeholder="Write a comment..."
+            ></textarea>
+          </div>
+        )}
+
+        <Button className="mt-4" variant="default">
+          Post Comment
+        </Button>
+      </div>
 
       <div className="mt-4 flex flex-col gap-y-6">
         {comments
