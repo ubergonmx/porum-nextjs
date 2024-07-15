@@ -8,7 +8,7 @@ interface CommentsSectionProps {
 
 export default function CommentsSection({ comments }: CommentsSectionProps) {
   return (
-    <div className="mt-4 flex flex-col gap-y-4">
+    <div className="mt-4 flex flex-col gap-y-4 pb-4 pl-4">
       <hr className="my-6 h-px w-full" />
 
       {/* Create comment editor goes here */}
