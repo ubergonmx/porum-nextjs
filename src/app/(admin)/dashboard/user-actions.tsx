@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -10,16 +12,25 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Delete, Edit } from "lucide-react";
+import React, { useState } from "react";
 
 interface UserActionsProps {
   userId: string;
   username: string;
 }
 
-export default async function UserActions({
-  userId,
-  username,
-}: UserActionsProps) {
+export default function UserActions({ userId, username }: UserActionsProps) {
+  const [editUserId, setEditUserId] = useState<string>("");
+  const [deleteUserId, setDeleteUserId] = useState<string>("");
+
+  const handleEditChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEditUserId(e.target.value);
+  };
+
+  const handleDeleteChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setDeleteUserId(e.target.value);
+  };
+
   return (
     // Provide options to edit or delete user
     <div className="flex gap-2">
@@ -43,7 +54,7 @@ export default async function UserActions({
               </Label>
               <Input
                 id="username"
-                defaultValue="@peduarte"
+                defaultValue="Unnamed User"
                 className="col-span-3"
               />
             </div>
@@ -53,13 +64,17 @@ export default async function UserActions({
               </Label>
               <Input
                 id="userId"
+                value={editUserId}
                 placeholder="Type user ID to confirm"
                 className="col-span-3"
+                onChange={handleEditChange}
               />
             </div>
           </div>
           <DialogFooter>
-            <Button type="submit">Save changes</Button>
+            <Button type="submit" disabled={editUserId !== userId}>
+              Save changes
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -84,13 +99,19 @@ export default async function UserActions({
               </Label>
               <Input
                 id="userId"
+                value={deleteUserId}
                 placeholder="Type user ID to confirm"
                 className="col-span-3"
+                onChange={handleDeleteChange}
               />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="destructive" type="submit">
+            <Button
+              variant="destructive"
+              type="submit"
+              disabled={deleteUserId !== userId}
+            >
               Save changes
             </Button>
           </DialogFooter>
