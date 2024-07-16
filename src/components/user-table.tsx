@@ -14,6 +14,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { User } from "@/db/schema";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@radix-ui/react-tooltip";
 
 interface UserTableProps {
   users?: User[];
@@ -62,7 +68,19 @@ export default async function UserTable({ users }: UserTableProps) {
                     {user.phoneNumber}
                   </TableCell>
                   <TableCell className="hidden sm:table-cell">
-                    {user.password}
+                    {/* Tooltip provides full password, shows only first 5 */}
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          {user.password.slice(0, 5)}...
+                        </TooltipTrigger>
+
+                        {/* Tooltip wraps because password is long */}
+                        <TooltipContent className="w-60 whitespace-normal text-wrap break-words rounded-md bg-background p-2 shadow-md">
+                          <div>{user.password}</div>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </TableCell>
                 </TableRow>
               ))
