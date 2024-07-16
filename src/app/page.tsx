@@ -45,6 +45,11 @@ export default async function Home() {
               <Button variant="outline" className="w-full">
                 <Link href={"/discussions"}>Go to discussions</Link>
               </Button>
+              {user.role === "admin" && (
+                <Button variant="outline" className="w-full">
+                  <Link href={"/dashboard"}>Go to admin panel</Link>
+                </Button>
+              )}
               <form action={logout} className="w-full">
                 <SubmitButton className="w-full">Log Out</SubmitButton>
               </form>
