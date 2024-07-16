@@ -121,6 +121,7 @@ export const posts = pgTable(
 export type Post = typeof posts.$inferSelect;
 export type NewPost = typeof posts.$inferInsert;
 
+export const deletedEnum = pgEnum("deleted", ["true", "false"]);
 export const comments = pgTable(
   "comments",
   {
@@ -135,6 +136,7 @@ export const comments = pgTable(
       withTimezone: true,
     }).defaultNow(),
     replyToId: text("reply_to_id").references((): AnyPgColumn => comments.id),
+    deleted: deletedEnum("deleted").notNull().default("false"),
   },
   (t) => ({
     dateIdx: index("comment_date_idx").on(t.createdAt),

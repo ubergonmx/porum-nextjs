@@ -118,3 +118,29 @@ export async function createComment(values: CommentInput) {
     }
   }
 }
+
+/**
+ * This deletes a comment by setting the `deleted` field to `true`.
+ * and wiping out the content so that it stays in the database but is not shown.
+ * @param commentId
+ */
+export async function deleteComment(commentId: string) {
+  try {
+    const deletedComment = await database
+      .update(comments)
+      .set({
+        deleted: "true",
+        content: "[Deleted]",
+      })
+      .where(eq(comments.id, commentId));
+
+    console.log("[deletedComment]", deletedComment);
+    return deletedComment;
+  } catch (err) {
+    console.log("Error deleting comment");
+    if (err instanceof Error) {
+      console.error(err.stack);
+    }
+  }
+  return null;
+}

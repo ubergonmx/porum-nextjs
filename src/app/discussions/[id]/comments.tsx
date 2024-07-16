@@ -51,6 +51,7 @@ export default async function CommentsSection({
                   <CommentPost
                     comment={topLevelComment}
                     commentUser={topLevelComment.user}
+                    isOwner={user?.id === topLevelComment.userId}
                   />
                 </div>
               </div>
