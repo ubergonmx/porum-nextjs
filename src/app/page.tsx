@@ -42,8 +42,8 @@ export default async function Home() {
               <p className="text-center text-sm text-muted-foreground">
                 You&apos;re all set!
               </p>
-              <Button variant="outline" className="w-full" disabled>
-                Go to discussions
+              <Button variant="outline" className="w-full">
+                <Link href={"/discussions"}>Go to discussions</Link>
               </Button>
               <form action={logout} className="w-full">
                 <SubmitButton className="w-full">Log Out</SubmitButton>
