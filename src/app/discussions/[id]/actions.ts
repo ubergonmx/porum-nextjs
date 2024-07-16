@@ -104,6 +104,7 @@ export async function createComment(values: CommentInput) {
   try {
     const newComment = await database.insert(comments).values({
       userId: values.userId,
+      postId: values.postId,
       content: values.content,
       replyToId: values.replyId,
     });

@@ -69,7 +69,7 @@ const PostFullPage: React.FC<PostFullPageProps> = ({ post, comments }) => {
         </div>
       </div>
       {/* Comments will go here */}
-      <CommentsSection comments={comments} />
+      <CommentsSection postId={post.id} comments={comments} />
     </div>
   );
 };
