@@ -55,19 +55,25 @@ export default async function UserTable({ users }: UserTableProps) {
                     <div className="font-medium">{user.username}</div>
                   </TableCell>
                   <TableCell className="hidden sm:table-cell">
-                    {/* Shorten super long emails (20 characters) */}
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger>
-                          {user.email.slice(0, 20)}...
-                        </TooltipTrigger>
+                    {user.email.length > 20 ? (
+                      <>
+                        {/* Shorten super long emails (20 characters) */}
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger>
+                              {user.email.slice(0, 20)}...
+                            </TooltipTrigger>
 
-                        {/* Tooltip wraps because email is long */}
-                        <TooltipContent className="w-60 whitespace-normal text-wrap break-words rounded-md bg-background p-2 shadow-md">
-                          <div>{user.email}</div>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
+                            {/* Tooltip wraps because email is long */}
+                            <TooltipContent className="w-60 whitespace-normal text-wrap break-words rounded-md bg-background p-2 shadow-md">
+                              <div>{user.email}</div>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </>
+                    ) : (
+                      user.email
+                    )}
                   </TableCell>
                   <TableCell className="hidden sm:table-cell">
                     {user.role}
