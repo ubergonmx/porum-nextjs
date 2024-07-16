@@ -25,7 +25,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
-import UserTable from "@/components/user-table";
+import UserTable from "@/app/(admin)/dashboard/user-table";
 import { fetchUsers } from "./actions";
 import { User } from "@/db/schema";
 import { validateRequest } from "@/lib/auth/validate-requests";

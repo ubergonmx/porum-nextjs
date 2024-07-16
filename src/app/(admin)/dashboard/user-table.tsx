@@ -20,7 +20,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@radix-ui/react-tooltip";
-import { Button } from "./ui/button";
+import { Button } from "../../../components/ui/button";
 import { Delete, Edit } from "lucide-react";
 
 interface UserTableProps {
