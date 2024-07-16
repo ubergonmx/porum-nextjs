@@ -91,3 +91,29 @@ export async function fetchCommentsAndUsers(postId: string) {
     }
   }
 }
+
+export interface CommentInput {
+  userId: string;
+  postId: string;
+  content: string;
+  replyId?: string;
+}
+
+export async function createComment(values: CommentInput) {
+  console.log("[createComment] comment", values);
+  try {
+    const newComment = await database.insert(comments).values({
+      userId: values.userId,
+      content: values.content,
+      replyToId: values.replyId,
+    });
+    console.log("[newComment]", newComment);
+
+    return newComment;
+  } catch (err) {
+    console.log("Error creating comment");
+    if (err instanceof Error) {
+      console.error(err.stack);
+    }
+  }
+}
