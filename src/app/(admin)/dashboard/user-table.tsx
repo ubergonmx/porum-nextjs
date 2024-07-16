@@ -20,8 +20,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@radix-ui/react-tooltip";
-import { Button } from "../../../components/ui/button";
-import { Delete, Edit } from "lucide-react";
+import UserActions from "./user-actions";
 
 interface UserTableProps {
   users?: User[];
@@ -99,15 +98,7 @@ export default async function UserTable({ users }: UserTableProps) {
                   </TableCell>
                   <TableCell className="hidden sm:table-cell">
                     {user.role !== "admin" && (
-                      // Provide options to edit or delete user
-                      <div className="flex gap-2">
-                        <Button variant="outline" size="icon">
-                          <Edit className="size-4" />
-                        </Button>
-                        <Button variant="destructive" size="icon">
-                          <Delete className="size-4" />
-                        </Button>
-                      </div>
+                      <UserActions userId={user.id} username={user.username} />
                     )}
                   </TableCell>
                 </TableRow>
