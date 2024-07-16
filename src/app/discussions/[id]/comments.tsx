@@ -3,6 +3,9 @@ import { CommentWithUser } from "./actions";
 import CommentPost from "./comment";
 import { validateRequest } from "@/lib/auth/validate-requests";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { CornerDownLeft } from "lucide-react";
 
 interface CommentsSectionProps {
   comments: CommentWithUser[];
@@ -20,12 +23,25 @@ export default async function CommentsSection({
       <div className="flex flex-col px-4">
         {user ? (
           // User can post comments
+
           <div>
             <h4 className="text-lg font-semibold">Leave a comment</h4>
-            <textarea
-              className="w-full rounded-md border border-gray-300 p-2"
-              placeholder="Write a comment..."
-            ></textarea>
+            <form className="relative overflow-hidden rounded-lg border bg-background focus-within:ring-1 focus-within:ring-ring">
+              <Label htmlFor="message" className="sr-only">
+                Message
+              </Label>
+              <Textarea
+                id="message"
+                placeholder="Type your message here..."
+                className="min-h-12 resize-none border-0 p-3 shadow-none focus-visible:ring-0"
+              />
+              <div className="flex items-center p-3 pt-0">
+                <Button type="submit" size="sm" className="ml-auto gap-1.5">
+                  Send Message
+                  <CornerDownLeft className="size-3.5" />
+                </Button>
+              </div>
+            </form>
           </div>
         ) : (
           // User must be logged in to post comments
@@ -38,10 +54,6 @@ export default async function CommentsSection({
             </Button>
           </div>
         )}
-
-        <Button className="mt-4" variant="default">
-          Post Comment
-        </Button>
       </div>
 
       <div className="mt-4 flex flex-col gap-y-6">
