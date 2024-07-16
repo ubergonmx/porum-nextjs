@@ -14,6 +14,9 @@ import { Label } from "@/components/ui/label";
 import { Delete, Edit } from "lucide-react";
 import React, { useState } from "react";
 
+import { updateUser, deleteUser } from "./actions";
+import { DialogClose } from "@radix-ui/react-dialog";
+
 interface UserActionsProps {
   userId: string;
   username: string;
@@ -22,13 +25,31 @@ interface UserActionsProps {
 export default function UserActions({ userId, username }: UserActionsProps) {
   const [editUserId, setEditUserId] = useState<string>("");
   const [deleteUserId, setDeleteUserId] = useState<string>("");
+  const [editedUsername, setEditedUsername] = useState<string>(username);
 
   const handleEditChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEditUserId(e.target.value);
   };
 
+  const handleEditedUsernameChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setEditedUsername(e.target.value);
+  };
+
   const handleDeleteChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDeleteUserId(e.target.value);
+  };
+
+  const handleEditUser = async () => {
+    if (editedUsername === username) return;
+    await updateUser(userId, editedUsername);
+
+    setEditedUsername(editedUsername);
+  };
+
+  const handleDeleteUser = async () => {
+    await deleteUser(userId);
   };
 
   return (
@@ -54,8 +75,9 @@ export default function UserActions({ userId, username }: UserActionsProps) {
               </Label>
               <Input
                 id="username"
-                defaultValue="Unnamed User"
+                defaultValue={username}
                 className="col-span-3"
+                onChange={handleEditedUsernameChange}
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
@@ -72,9 +94,15 @@ export default function UserActions({ userId, username }: UserActionsProps) {
             </div>
           </div>
           <DialogFooter>
-            <Button type="submit" disabled={editUserId !== userId}>
-              Save changes
-            </Button>
+            <DialogClose asChild>
+              <Button
+                type="submit"
+                disabled={editUserId !== userId}
+                onClick={handleEditUser}
+              >
+                Save changes
+              </Button>
+            </DialogClose>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -107,13 +135,16 @@ export default function UserActions({ userId, username }: UserActionsProps) {
             </div>
           </div>
           <DialogFooter>
-            <Button
-              variant="destructive"
-              type="submit"
-              disabled={deleteUserId !== userId}
-            >
-              Save changes
-            </Button>
+            <DialogClose asChild>
+              <Button
+                variant="destructive"
+                type="submit"
+                disabled={deleteUserId !== userId}
+                onClick={handleDeleteUser}
+              >
+                Save changes
+              </Button>
+            </DialogClose>
           </DialogFooter>
         </DialogContent>
       </Dialog>
