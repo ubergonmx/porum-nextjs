@@ -9,6 +9,7 @@ interface CommentProps {
   comment: Comment;
   commentUser: CommentUser;
   isOwner: boolean;
+  replyable?: boolean;
 }
 
 function formatTimeToNow(date: Date) {
@@ -33,6 +34,7 @@ export default function CommentPost({
   comment,
   commentUser,
   isOwner,
+  replyable = true,
 }: CommentProps) {
   return (
     <div className="flex flex-col">
@@ -55,7 +57,11 @@ export default function CommentPost({
         </div>
         {comment.deleted === "false" && (
           <div className="ml-auto mr-4 flex items-center gap-2">
-            <CommentActions comment={comment} isOwner={isOwner} />
+            <CommentActions
+              comment={comment}
+              isOwner={isOwner}
+              replyable={replyable}
+            />
           </div>
         )}
       </div>

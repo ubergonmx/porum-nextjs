@@ -2,6 +2,7 @@
 
 import { database } from "@/db/database";
 import { Post, posts, users, Comment, comments } from "@/db/schema";
+import { validateRequest } from "@/lib/auth/validate-requests";
 import { eq, inArray } from "drizzle-orm";
 
 export async function fetchPost(postId: string) {
@@ -158,6 +159,42 @@ export async function editComment(commentId: string, newContent: string) {
     return editedComment;
   } catch (err) {
     console.log("Error editing comment");
+    if (err instanceof Error) {
+      console.error(err.stack);
+    }
+  }
+  return null;
+}
+
+export async function createReply(
+  postId: string,
+  commentId: string,
+  reply: string,
+) {
+  console.log(
+    "[createReply] postId, commentId, reply",
+    postId,
+    commentId,
+    reply,
+  );
+  // First validate user's session
+  const { user } = await validateRequest();
+  if (!user) {
+    throw new Error("User not authenticated");
+  }
+
+  try {
+    const newReply = await createComment({
+      userId: user.id,
+      postId,
+      content: reply,
+      replyId: commentId,
+    });
+
+    console.log("[newReply]", newReply);
+    return newReply;
+  } catch (err) {
+    console.log("Error creating reply");
     if (err instanceof Error) {
       console.error(err.stack);
     }

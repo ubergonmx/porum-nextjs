@@ -58,6 +58,26 @@ export default async function CommentsSection({
                     }
                   />
                 </div>
+
+                {/* Render replies under comment */}
+                {comments
+                  .filter((comment) => comment.replyToId === topLevelComment.id)
+                  .map((reply) => {
+                    return (
+                      <div key={reply.id} className="ml-4">
+                        <CommentPost
+                          comment={reply}
+                          commentUser={reply.user}
+                          isOwner={
+                            user?.role === "admin" ||
+                            user?.role === "moderator" ||
+                            user?.id === reply.userId
+                          }
+                          replyable={false}
+                        />
+                      </div>
+                    );
+                  })}
               </div>
             );
           })}
