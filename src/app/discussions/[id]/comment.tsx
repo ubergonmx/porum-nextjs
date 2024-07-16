@@ -2,18 +2,8 @@
 
 import { UserAvatar } from "@/components/user-avatar";
 import { Comment } from "@/db/schema";
-import { CommentUser, deleteComment } from "./actions";
-import { Button } from "@/components/ui/button";
-import { Flag, Trash } from "lucide-react";
-import {
-  Dialog,
-  DialogClose,
-  DialogFooter,
-  DialogHeader,
-  DialogContent,
-  DialogDescription,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { CommentUser } from "./actions";
+import CommentActions from "./comment-actions";
 
 interface CommentProps {
   comment: Comment;
@@ -44,10 +34,6 @@ export default function CommentPost({
   commentUser,
   isOwner,
 }: CommentProps) {
-  const handleDelete = async () => {
-    await deleteComment(comment.id);
-  };
-
   return (
     <div className="flex flex-col">
       <div className="flex items-center">
@@ -69,35 +55,7 @@ export default function CommentPost({
         </div>
         {comment.deleted === "false" && (
           <div className="ml-auto mr-4 flex items-center gap-2">
-            {/* Delete button that shows only if owned by user */}
-            {isOwner ? (
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button variant="ghost" size="sm">
-                    <Trash className="size-4" />
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <h2>Delete comment?</h2>
-                    <DialogDescription>
-                      Are you sure you want to delete this comment? This action
-                      cannot be undone.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <DialogFooter>
-                    <DialogClose asChild>
-                      <Button onClick={handleDelete}>Delete</Button>
-                    </DialogClose>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
-            ) : (
-              // Report button that shows only if not owned by user
-              <Button variant="ghost" size="sm">
-                <Flag className="size-4" />
-              </Button>
-            )}
+            <CommentActions comment={comment} isOwner={isOwner} />
           </div>
         )}
       </div>

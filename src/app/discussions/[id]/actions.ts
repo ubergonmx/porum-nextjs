@@ -144,3 +144,23 @@ export async function deleteComment(commentId: string) {
   }
   return null;
 }
+
+export async function editComment(commentId: string, newContent: string) {
+  try {
+    const editedComment = await database
+      .update(comments)
+      .set({
+        content: newContent,
+      })
+      .where(eq(comments.id, commentId));
+
+    console.log("[editedComment]", editedComment);
+    return editedComment;
+  } catch (err) {
+    console.log("Error editing comment");
+    if (err instanceof Error) {
+      console.error(err.stack);
+    }
+  }
+  return null;
+}
