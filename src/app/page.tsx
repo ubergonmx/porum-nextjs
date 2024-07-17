@@ -20,7 +20,8 @@ export const fetchCache = "force-no-store";
 export default async function Home() {
   const { user } = await validateRequest();
 
-  const avatarURL = user ? `/avatars/${user.avatar}` : "/avatars/default.png";
+  const avatarURL =
+    user && user.avatar ? `/avatars/${user.avatar}` : "/avatars/default.png";
 
   return (
     <div className="pt:mt-0 mx-auto flex flex-col items-center justify-center px-6 pt-8 dark:bg-gray-900 md:h-screen">
