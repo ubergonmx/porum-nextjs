@@ -58,72 +58,70 @@ export default function Login() {
   }
 
   return (
-    <div className="pt:mt-0 mx-auto flex flex-col items-center justify-center px-6 pt-8 dark:bg-gray-900 md:h-screen">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <CardTitle>{APP_TITLE} Log in</CardTitle>
-          <CardDescription>Welcome back!</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input placeholder="juandelacruz@email.com" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <PasswordInput
-                        autoComplete="current-password"
-                        placeholder="********"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              {loginError && (
-                <p className="rounded-lg border bg-destructive/10 p-2 text-[0.8rem] font-medium text-destructive">
-                  {loginError}
-                </p>
+    <Card className="w-full max-w-md">
+      <CardHeader className="text-center">
+        <CardTitle>{APP_TITLE} Log in</CardTitle>
+        <CardDescription>Welcome back!</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input placeholder="juandelacruz@email.com" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
               )}
-              <div className="flex flex-wrap justify-between">
-                <Link href={"/signup"}>
-                  <span className="p-0 text-xs font-medium underline-offset-4 hover:underline">
-                    Not signed up? Sign up now.
-                  </span>
-                </Link>
-                <Link href={"/reset-password"}>
-                  <span className="p-0 text-xs font-medium underline-offset-4 hover:underline">
-                    Forgot password?
-                  </span>
-                </Link>
-              </div>
-              <SubmitButton className="w-full" loading={isPending}>
-                Log In
-              </SubmitButton>
-              <Button variant="outline" className="w-full" asChild>
-                <Link href="/">Cancel</Link>
-              </Button>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
-    </div>
+            />
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <PasswordInput
+                      autoComplete="current-password"
+                      placeholder="********"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {loginError && (
+              <p className="rounded-lg border bg-destructive/10 p-2 text-[0.8rem] font-medium text-destructive">
+                {loginError}
+              </p>
+            )}
+            <div className="flex flex-wrap justify-between">
+              <Link href={"/signup"}>
+                <span className="p-0 text-xs font-medium underline-offset-4 hover:underline">
+                  Not signed up? Sign up now.
+                </span>
+              </Link>
+              <Link href={"/reset-password"}>
+                <span className="p-0 text-xs font-medium underline-offset-4 hover:underline">
+                  Forgot password?
+                </span>
+              </Link>
+            </div>
+            <SubmitButton className="w-full" loading={isPending}>
+              Log In
+            </SubmitButton>
+            <Button variant="outline" className="w-full" asChild>
+              <Link href="/">Cancel</Link>
+            </Button>
+          </form>
+        </Form>
+      </CardContent>
+    </Card>
   );
 }
