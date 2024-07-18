@@ -22,17 +22,19 @@ export default async function VerifyEmailPage() {
   if (user.emailVerified) redirect(Paths.Home);
 
   return (
-    <Card className="w-full max-w-md">
-      <CardHeader>
-        <CardTitle>Verify Email</CardTitle>
-        <CardDescription>
-          Verification code was sent to <strong>{user.email}</strong>. Check
-          your spam folder if you can&apos;t find the email.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <VerifyCode />
-      </CardContent>
-    </Card>
+    <div className="pt:mt-0 mx-auto flex flex-col items-center justify-center px-6 pt-8 dark:bg-gray-900 md:h-screen">
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardTitle>Verify Email</CardTitle>
+          <CardDescription>
+            Verification code was sent to <strong>{user.email}</strong>. Check
+            your spam folder if you can&apos;t find the email.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <VerifyCode />
+        </CardContent>
+      </Card>
+    </div>
   );
 }

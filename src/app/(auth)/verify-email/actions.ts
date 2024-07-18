@@ -1,3 +1,5 @@
+"use server";
+
 import { database as db } from "@/db/database";
 import { emailVerificationCodes, users } from "@/db/schema";
 import { eq } from "drizzle-orm";
