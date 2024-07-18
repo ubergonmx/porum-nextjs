@@ -11,6 +11,7 @@ import { Paths } from "@/lib/constants";
 import { lucia } from "@/lib/auth";
 import { cookies } from "next/headers";
 import { EmailTemplate, sendMail } from "@/lib/email";
+import { CODE_LENGTH } from "./page";
 
 export async function generateEmailVerificationCode(
   userId: string,
@@ -19,7 +20,7 @@ export async function generateEmailVerificationCode(
   await db
     .delete(emailVerificationCodes)
     .where(eq(emailVerificationCodes.userId, userId));
-  const code = generateRandomString(6); // 8 digit code
+  const code = generateRandomString(CODE_LENGTH);
   await db.insert(emailVerificationCodes).values({
     userId,
     email,
@@ -34,7 +35,7 @@ export async function verifyEmail(
   formData: FormData,
 ): Promise<{ error: string } | void> {
   const code = formData.get("code");
-  if (typeof code !== "string" || code.length !== 8) {
+  if (typeof code !== "string" || code.length !== CODE_LENGTH) {
     return { error: "Invalid code" };
   }
   const { user } = await validateRequest();

@@ -10,6 +10,8 @@ import { validateRequest } from "@/lib/auth/validate-request";
 import { VerifyCode } from "./verify-code";
 import { Paths } from "@/lib/constants";
 
+export const CODE_LENGTH = 7;
+
 export const metadata = {
   title: "Verify Email",
   description: "Verify Email Page",
@@ -19,7 +21,13 @@ export default async function VerifyEmailPage() {
   const { user } = await validateRequest();
 
   if (!user) redirect(Paths.Login);
-  if (user.emailVerified) redirect(Paths.Home);
+  if (user.emailVerified) {
+    if (user.role === "admin") {
+      return redirect(Paths.AdminDashboard);
+    } else {
+      return redirect(Paths.Home);
+    }
+  }
 
   return (
     <div className="pt:mt-0 mx-auto flex flex-col items-center justify-center px-6 pt-8 dark:bg-gray-900 md:h-screen">
@@ -32,7 +40,7 @@ export default async function VerifyEmailPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <VerifyCode />
+          <VerifyCode codeLength={CODE_LENGTH} userRole={user.role} />
         </CardContent>
       </Card>
     </div>
