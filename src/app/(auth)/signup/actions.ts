@@ -14,6 +14,8 @@ import { writeFile as fsWriteFile } from "fs/promises";
 import { env } from "@/env";
 import { standardRateLimit, getIP } from "@/lib/ratelimit";
 import { argon2idConfig } from "@/lib/auth/hash";
+import { EmailTemplate, sendMail } from "@/lib/email";
+import { generateEmailVerificationCode } from "../verify-email/actions";
 
 export async function signup(
   values: SignupInput,
@@ -103,6 +105,12 @@ export async function signup(
       avatar: filename,
     })
     .returning();
+
+  const verificationCode = await generateEmailVerificationCode(user.id, email);
+  await sendMail(email, EmailTemplate.EmailVerification, {
+    code: verificationCode,
+  });
+
   const session = await lucia.createSession(user.id, {});
   const sessionCookie = lucia.createSessionCookie(session.id);
   cookies().set(
@@ -115,5 +123,5 @@ export async function signup(
     console.log("[DEV] User created successfully", user);
   }
 
-  return redirect(Paths.Home);
+  return redirect(Paths.VerifyEmail);
 }
