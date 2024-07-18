@@ -226,6 +226,12 @@ export default function Signup() {
                   {signupError}
                 </p>
               )}
+              <SubmitButton className="w-full" loading={isPending}>
+                Sign Up
+              </SubmitButton>
+              <Button variant="outline" className="w-full" asChild>
+                <Link href="/">Cancel</Link>
+              </Button>
               <div>
                 <Link href={"/login"}>
                   <span className="p-0 text-xs font-medium underline-offset-4 hover:underline">
@@ -233,12 +239,6 @@ export default function Signup() {
                   </span>
                 </Link>
               </div>
-              <SubmitButton className="w-full" loading={isPending}>
-                Sign Up
-              </SubmitButton>
-              <Button variant="outline" className="w-full" asChild>
-                <Link href="/">Cancel</Link>
-              </Button>
             </form>
           </Form>
         </CardContent>
