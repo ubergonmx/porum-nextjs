@@ -1,6 +1,6 @@
 import { CommentWithUser } from "./actions";
 import CommentPost from "./comment";
-import { validateRequest } from "@/lib/auth/validate-requests";
+import { validateRequest } from "@/lib/auth/validate-request";
 import { Button } from "@/components/ui/button";
 import CommentPoster from "./comment-poster";
 

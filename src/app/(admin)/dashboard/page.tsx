@@ -28,7 +28,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import UserTable from "@/app/(admin)/dashboard/user-table";
 import { fetchUsers } from "./actions";
 import { User } from "@/db/schema";
-import { validateRequest } from "@/lib/auth/validate-requests";
+import { validateRequest } from "@/lib/auth/validate-request";
 import { Paths } from "@/lib/constants";
 import { redirect } from "next/navigation";
 

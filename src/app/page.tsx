@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import { validateRequest } from "@/lib/auth/validate-requests";
+import { validateRequest } from "@/lib/auth/validate-request";
 import { APP_TITLE } from "@/lib/constants";
 import Link from "next/link";
 import { logout } from "./_header/actions";

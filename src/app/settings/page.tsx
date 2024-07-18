@@ -23,7 +23,7 @@ import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import AvatarUploadChunk from "./avatar-upload";
 import Image from "next/image";
-import { validateRequest } from "@/lib/auth/validate-requests";
+import { validateRequest } from "@/lib/auth/validate-request";
 import { Paths } from "@/lib/constants";
 import { redirect } from "next/navigation";
 

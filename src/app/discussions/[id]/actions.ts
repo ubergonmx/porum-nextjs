@@ -2,7 +2,7 @@
 
 import { database } from "@/db/database";
 import { Post, posts, users, Comment, comments } from "@/db/schema";
-import { validateRequest } from "@/lib/auth/validate-requests";
+import { validateRequest } from "@/lib/auth/validate-request";
 import { eq, inArray } from "drizzle-orm";
 
 export async function fetchPost(postId: string) {
