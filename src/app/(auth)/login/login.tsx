@@ -102,10 +102,15 @@ export default function Login() {
                   {loginError}
                 </p>
               )}
-              <div>
+              <div className="flex flex-wrap justify-between">
                 <Link href={"/signup"}>
                   <span className="p-0 text-xs font-medium underline-offset-4 hover:underline">
-                    Don&apos;t have an account yet? Sign up instead.
+                    Not signed up? Sign up now.
+                  </span>
+                </Link>
+                <Link href={"/reset-password"}>
+                  <span className="p-0 text-xs font-medium underline-offset-4 hover:underline">
+                    Forgot password?
                   </span>
                 </Link>
               </div>
