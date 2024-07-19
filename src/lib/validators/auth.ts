@@ -133,8 +133,9 @@ export const loginSchema = z.object({
 
 export type LoginInput = z.infer<typeof loginSchema>;
 
-export const forgotPasswordSchema = z.object({
-  email: z
+export const forgotPasswordSchema = // z.object({
+  // email: z
+  z
     .string({ required_error: "Email is required" })
     .trim()
     .min(3, {
@@ -145,8 +146,8 @@ export const forgotPasswordSchema = z.object({
     })
     .refine(checkEmailLength, {
       message: "Local part and domain part must be 64 and 255 bytes or less",
-    }),
-});
+    });
+// });
 export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
 
 export const resetPasswordSchema = z.object({
