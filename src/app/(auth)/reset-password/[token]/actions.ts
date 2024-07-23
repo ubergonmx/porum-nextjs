@@ -7,7 +7,6 @@ import { argon2idConfig } from "@/lib/auth/hash";
 import { resetPasswordSchema } from "@/lib/validators/auth";
 import { hash } from "@node-rs/argon2";
 import { eq } from "drizzle-orm";
-import { cookies } from "next/headers";
 import { isWithinExpirationDate } from "oslo";
 
 export async function resetPassword(
@@ -49,13 +48,6 @@ export async function resetPassword(
     .update(users)
     .set({ password: hashedPassword })
     .where(eq(users.id, dbToken.userId));
-  const session = await lucia.createSession(dbToken.userId, {});
-  const sessionCookie = lucia.createSessionCookie(session.id);
-  cookies().set(
-    sessionCookie.name,
-    sessionCookie.value,
-    sessionCookie.attributes,
-  );
 
   return { success: true };
 }
