@@ -7,12 +7,22 @@ import { SubmitButton } from "@/components/submit-button";
 import { PasswordInput } from "@/components/password-input";
 import { Label } from "@/components/ui/label";
 import { resetPassword } from "./actions";
+import { useRouter } from "next/router";
+import { Paths } from "@/lib/constants";
 
 export function ResetPassword({ token }: { token: string }) {
   const { toast } = useToast();
   const [state, formAction] = useFormState(resetPassword, null);
+  const router = useRouter();
 
   useEffect(() => {
+    if (state?.success) {
+      toast({
+        title: "Password Reset",
+        description: "Your password has been reset.",
+      });
+      router.push(Paths.Login);
+    }
     if (state?.error) {
       toast({
         title: "Error",
@@ -20,7 +30,7 @@ export function ResetPassword({ token }: { token: string }) {
         variant: "destructive",
       });
     }
-  }, [state?.error]);
+  }, [state?.error, state?.success, toast, router]);
 
   return (
     <form action={formAction} className="space-y-4">

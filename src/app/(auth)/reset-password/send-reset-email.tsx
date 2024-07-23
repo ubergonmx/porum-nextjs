@@ -32,7 +32,7 @@ export function SendResetEmail() {
         variant: "destructive",
       });
     }
-  }, [state?.error, state?.success]);
+  }, [state?.error, state?.success, toast, router]);
 
   return (
     <form className="space-y-4" action={formAction}>

@@ -4,12 +4,10 @@ import { database as db } from "@/db/database";
 import { passwordResetTokens, users } from "@/db/schema";
 import { lucia } from "@/lib/auth";
 import { argon2idConfig } from "@/lib/auth/hash";
-import { Paths } from "@/lib/constants";
 import { resetPasswordSchema } from "@/lib/validators/auth";
 import { hash } from "@node-rs/argon2";
 import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 import { isWithinExpirationDate } from "oslo";
 
 export async function resetPassword(
@@ -47,11 +45,10 @@ export async function resetPassword(
 
   await lucia.invalidateUserSessions(dbToken.userId);
   const hashedPassword = await hash(password, argon2idConfig);
-  const [user] = await db
+  await db
     .update(users)
     .set({ password: hashedPassword })
-    .where(eq(users.id, dbToken.userId))
-    .returning();
+    .where(eq(users.id, dbToken.userId));
   const session = await lucia.createSession(dbToken.userId, {});
   const sessionCookie = lucia.createSessionCookie(session.id);
   cookies().set(
@@ -59,9 +56,6 @@ export async function resetPassword(
     sessionCookie.value,
     sessionCookie.attributes,
   );
-  if (user.role === "admin") {
-    redirect(Paths.AdminDashboard);
-  } else {
-    redirect(Paths.Home);
-  }
+
+  return { success: true };
 }
