@@ -16,6 +16,7 @@ import { standardRateLimit, getIP } from "@/lib/ratelimit";
 import { argon2idConfig } from "@/lib/auth/hash";
 import { EmailTemplate, sendMail } from "@/lib/email";
 import { generateEmailVerificationCode } from "../verify-email/actions";
+import { isRedirectError } from "next/dist/client/components/redirect";
 
 export async function signup(
   values: SignupInput,
@@ -129,6 +130,7 @@ export async function signup(
 
     return redirect(Paths.VerifyEmail);
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error(error);
     return {
       formError: "An error occurred",

@@ -10,6 +10,7 @@ import { ActionResponse } from "@/lib/types";
 import { loginRateLimit, getIP } from "@/lib/ratelimit";
 import { verify } from "@node-rs/argon2";
 import { argon2idConfig } from "@/lib/auth/hash";
+import { isRedirectError } from "next/dist/client/components/redirect";
 
 export async function login(
   values: LoginInput,
@@ -78,6 +79,7 @@ export async function login(
 
     return redirect(Paths.Home);
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.log(error);
     return {
       formError: "An error occurred. Please try again later.",
