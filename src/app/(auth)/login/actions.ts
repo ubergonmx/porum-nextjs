@@ -14,72 +14,73 @@ import { argon2idConfig } from "@/lib/auth/hash";
 export async function login(
   values: LoginInput,
 ): Promise<ActionResponse<LoginInput>> {
-  const { success } = await loginRateLimit.limit(getIP() ?? values.email);
+  try {
+    const { success } = await loginRateLimit.limit(getIP() ?? values.email);
 
-  if (!success) {
-    return {
-      formError: "Too many requests, please try again later",
-    };
-  }
-
-  const parsed = loginSchema.safeParse(values);
-  if (!parsed.success) {
-    const err = parsed.error.flatten();
-    return {
-      fieldError: {
-        email: err.fieldErrors.email?.[0],
-        password: err.fieldErrors.password?.[0],
-      },
-    };
-  }
-
-  const { email, password } = parsed.data;
-
-  const existingUser = await db.query.users.findFirst({
-    where: (table, { eq }) => eq(table.email, email),
-  });
-
-  if (!existingUser) {
-    return {
-      formError: "Incorrect email or password",
-    };
-  }
-
-  const validPassword = await verify(
-    existingUser.password,
-    password,
-    argon2idConfig,
-  );
-  if (!validPassword) {
-    return {
-      formError: "Incorrect email or password",
-    };
-  }
-
-  const session = await lucia.createSession(existingUser.id, {});
-  const sessionCookie = lucia.createSessionCookie(session.id);
-  cookies().set(
-    sessionCookie.name,
-    sessionCookie.value,
-    sessionCookie.attributes,
-  );
-
-  if (existingUser.role === "admin") {
-    if (process.env.NODE_ENV === "development") {
-      console.log(
-        new Date().toISOString() + " [DEV] Admin logged in with id:",
-        existingUser.id,
-      );
+    if (!success) {
+      return {
+        formError: "Too many requests, please try again later",
+      };
     }
-    return redirect(Paths.AdminDashboard);
-  }
 
-  if (process.env.NODE_ENV === "development") {
-    console.log(
-      new Date().toISOString() + " [DEV] User logged in with id:",
-      existingUser.id,
+    const parsed = loginSchema.safeParse(values);
+    if (!parsed.success) {
+      const err = parsed.error.flatten();
+      return {
+        fieldError: {
+          email: err.fieldErrors.email?.[0],
+          password: err.fieldErrors.password?.[0],
+        },
+      };
+    }
+
+    const { email, password } = parsed.data;
+
+    const existingUser = await db.query.users.findFirst({
+      where: (table, { eq }) => eq(table.email, email),
+    });
+
+    if (!existingUser) {
+      return {
+        formError: "Incorrect email or password",
+      };
+    }
+
+    const validPassword = await verify(
+      existingUser.password,
+      password,
+      argon2idConfig,
     );
-  }
+    if (!validPassword) {
+      return {
+        formError: "Incorrect email or password",
+      };
+    }
 
-  return redirect(Paths.Home);
+    const session = await lucia.createSession(existingUser.id, {});
+    const sessionCookie = lucia.createSessionCookie(session.id);
+    cookies().set(
+      sessionCookie.name,
+      sessionCookie.value,
+      sessionCookie.attributes,
+    );
+
+    if (existingUser.role === "admin") {
+      if (process.env.NODE_ENV === "development") {
+        console.log("Admin logged in with id:", existingUser.id);
+      }
+      return redirect(Paths.AdminDashboard);
+    }
+
+    if (process.env.NODE_ENV === "development") {
+      console.log("User logged in with id:", existingUser.id);
+    }
+
+    return redirect(Paths.Home);
+  } catch (error) {
+    console.log(error);
+    return {
+      formError: "An error occurred. Please try again later.",
+    };
+  }
 }
