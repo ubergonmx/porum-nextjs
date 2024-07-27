@@ -87,9 +87,7 @@ export async function signup(
         const fullPath = process.cwd() + "/" + env.LOCAL_AVATAR_PATH + filename;
         await fsWriteFile(fullPath, buffer);
 
-        if (env.NODE_ENV === "development") {
-          console.log("[DEV] Avatar saved to", fullPath);
-        }
+        console.log("[SIGNUP] Avatar saved to", fullPath);
       }
     }
     const hashedPassword = await hash(password, argon2idConfig);
@@ -125,7 +123,9 @@ export async function signup(
     );
 
     if (env.NODE_ENV === "development") {
-      console.log("User created successfully", user);
+      console.log(
+        `[SIGNUP] User created successfully: ${user.id}(${user.username})`,
+      );
     }
 
     return redirect(Paths.VerifyEmail);

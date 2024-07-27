@@ -37,28 +37,24 @@ export async function login(
 
     const { email, password } = parsed.data;
 
-    const existingUser = await db.query.users.findFirst({
+    const user = await db.query.users.findFirst({
       where: (table, { eq }) => eq(table.email, email),
     });
 
-    if (!existingUser) {
+    if (!user) {
       return {
         formError: "Incorrect email or password",
       };
     }
 
-    const validPassword = await verify(
-      existingUser.password,
-      password,
-      argon2idConfig,
-    );
+    const validPassword = await verify(user.password, password, argon2idConfig);
     if (!validPassword) {
       return {
         formError: "Incorrect email or password",
       };
     }
 
-    const session = await lucia.createSession(existingUser.id, {});
+    const session = await lucia.createSession(user.id, {});
     const sessionCookie = lucia.createSessionCookie(session.id);
     cookies().set(
       sessionCookie.name,
@@ -66,17 +62,14 @@ export async function login(
       sessionCookie.attributes,
     );
 
-    if (existingUser.role === "admin") {
-      if (process.env.NODE_ENV === "development") {
-        console.log("Admin logged in with id:", existingUser.id);
-      }
+    if (user.role === "admin") {
+      console.log(
+        `[LOGIN] Admin logged in with id: ${user.id}(${user.username})`,
+      );
       return redirect(Paths.AdminDashboard);
     }
 
-    if (process.env.NODE_ENV === "development") {
-      console.log("User logged in with id:", existingUser.id);
-    }
-
+    console.log(`[LOGIN] User logged in with id: ${user.id}(${user.username})`);
     return redirect(Paths.Home);
   } catch (error) {
     if (isRedirectError(error)) throw error;
