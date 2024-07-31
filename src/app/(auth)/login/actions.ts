@@ -35,6 +35,7 @@ export async function login(
           email: err.fieldErrors.email?.[0],
           password: err.fieldErrors.password?.[0],
         },
+        details: `IP: ${getIP()}`,
       });
     }
 
@@ -116,9 +117,9 @@ export async function login(
       }
     }
 
-    let errorMessage = "An error occurred. Please try again later.";
+    let errorMessage = "An error occurred, please try again later";
     if (isLoginError(error)) {
-      if (error.userMessage) errorMessage = error.userMessage;
+      errorMessage = error.userMessage ?? errorMessage;
       if (error.fieldError) return { fieldError: error.fieldError };
     }
     return {

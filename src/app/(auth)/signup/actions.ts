@@ -17,6 +17,7 @@ import { argon2idConfig } from "@/lib/auth/hash";
 import { EmailTemplate, sendMail } from "@/lib/email";
 import { generateEmailVerificationCode } from "../verify-email/actions";
 import { isRedirectError } from "next/dist/client/components/redirect";
+import { FormError, isSignupError } from "@/lib/error";
 
 export async function signup(
   values: SignupInput,
@@ -26,9 +27,10 @@ export async function signup(
     const { success } = await standardRateLimit.limit(getIP() ?? values.email);
 
     if (!success) {
-      return {
-        formError: "Unable to process this time",
-      };
+      throw new FormError("SignupError", "Rate limit exceeded", {
+        userMessage: "Too many requests, please try again later",
+        details: `IP: ${getIP()}`,
+      });
     }
 
     const obj = Object.fromEntries(formData.entries());
@@ -38,7 +40,7 @@ export async function signup(
       .safeParseAsync(values);
     if (!parsed.success) {
       const err = parsed.error.flatten();
-      return {
+      throw new FormError<SignupInput>("SignupError", "Invalid form data", {
         fieldError: {
           firstName: err.fieldErrors.firstName?.[0],
           lastName: err.fieldErrors.lastName?.[0],
@@ -47,7 +49,8 @@ export async function signup(
           password: err.fieldErrors.password?.[0],
           avatar: err.fieldErrors.avatar?.[0],
         },
-      };
+        details: `IP: ${getIP()}`,
+      });
     }
 
     const { firstName, lastName, username, email, password, avatar } =
@@ -59,11 +62,12 @@ export async function signup(
       columns: { username: true },
     });
     if (existingUsername) {
-      return {
+      throw new FormError("SignupError", "Username already exists", {
         fieldError: {
           username: "Username already exists",
         },
-      };
+        details: `IP: ${getIP()}`,
+      });
     }
 
     const existingEmail = await db.query.users.findFirst({
@@ -72,11 +76,12 @@ export async function signup(
     });
 
     if (existingEmail) {
-      return {
+      throw new FormError("SignupError", "Email already exists", {
         fieldError: {
           email: "Cannot create account with that email",
         },
-      };
+        details: `IP: ${getIP()}`,
+      });
     }
 
     let filename: string | undefined;
@@ -122,18 +127,58 @@ export async function signup(
       sessionCookie.attributes,
     );
 
-    if (env.NODE_ENV === "development") {
-      console.log(
-        `[SIGNUP] User created successfully: ${user.id}(${user.username})`,
-      );
+    console.log(
+      `[SIGNUP] User created successfully: ${user.id}(${user.username})`,
+    );
+    return redirect(Paths.VerifyEmail);
+  } catch (error: any | FormError<SignupInput>) {
+    if (isRedirectError(error)) throw error; // thrown exclusively because of redirect
+
+    if (error instanceof FormError) {
+      console.error(`[SIGNUP] ${error.name}: ${error.message}`);
+
+      if (env.DEBUG_MODE) {
+        console.error(
+          JSON.stringify(
+            {
+              type: error.name,
+              message: error.message,
+              userMessage: error.userMessage,
+              details: error.details,
+              stack: error.stack,
+              fieldErrors: error.fieldError,
+            },
+            null,
+            2,
+          ),
+        );
+      }
+    } else {
+      console.error(`[SIGNUP] Unexpected error: ${error.message}`);
+
+      if (env.DEBUG_MODE) {
+        console.error(
+          JSON.stringify(
+            {
+              type: error.name || "UnknownError",
+              message: error.message,
+              stack: error.stack,
+            },
+            null,
+            2,
+          ),
+        );
+      }
     }
 
-    return redirect(Paths.VerifyEmail);
-  } catch (error) {
-    if (isRedirectError(error)) throw error;
-    console.error(error);
+    let errorMessage = "An error occurred, please try again later";
+    if (isSignupError(error)) {
+      errorMessage = error.userMessage ?? errorMessage;
+      if (error.fieldError) return { fieldError: error.fieldError };
+    }
+
     return {
-      formError: "An error occurred",
+      formError: errorMessage,
     };
   }
 }
