@@ -11,6 +11,8 @@ import { loginRateLimit, getIP } from "@/lib/ratelimit";
 import { verify } from "@node-rs/argon2";
 import { argon2idConfig } from "@/lib/auth/hash";
 import { isRedirectError } from "next/dist/client/components/redirect";
+import { env } from "@/env";
+import { FormError, isLoginError } from "@/lib/error";
 
 export async function login(
   values: LoginInput,
@@ -19,20 +21,21 @@ export async function login(
     const { success } = await loginRateLimit.limit(getIP() ?? values.email);
 
     if (!success) {
-      return {
-        formError: "Too many requests, please try again later",
-      };
+      throw new FormError("LoginError", "Rate limit exceeded", {
+        userMessage: "Too many requests, please try again later",
+        details: `IP: ${getIP()}`,
+      });
     }
 
     const parsed = loginSchema.safeParse(values);
     if (!parsed.success) {
       const err = parsed.error.flatten();
-      return {
+      throw new FormError<LoginInput>("LoginError", "Invalid form data", {
         fieldError: {
           email: err.fieldErrors.email?.[0],
           password: err.fieldErrors.password?.[0],
         },
-      };
+      });
     }
 
     const { email, password } = parsed.data;
@@ -42,16 +45,18 @@ export async function login(
     });
 
     if (!user) {
-      return {
-        formError: "Incorrect email or password",
-      };
+      throw new FormError("LoginError", "User not found", {
+        userMessage: "Incorrect email or password",
+        details: `Email: ${email}, IP: ${getIP()}`,
+      });
     }
 
     const validPassword = await verify(user.password, password, argon2idConfig);
     if (!validPassword) {
-      return {
-        formError: "Incorrect email or password",
-      };
+      throw new FormError("LoginError", "Invalid password", {
+        userMessage: "Incorrect email or password",
+        details: `Email: ${email}, IP: ${getIP()}`,
+      });
     }
 
     const session = await lucia.createSession(user.id, {});
@@ -71,11 +76,53 @@ export async function login(
 
     console.log(`[LOGIN] User logged in with id: ${user.id}(${user.username})`);
     return redirect(Paths.Home);
-  } catch (error) {
-    if (isRedirectError(error)) throw error;
-    console.log(error);
+  } catch (error: any | FormError<LoginInput>) {
+    if (isRedirectError(error)) throw error; // thrown exclusively because of redirect
+
+    if (error instanceof FormError) {
+      console.error(`[LOGIN] ${error.name}: ${error.message}`);
+
+      if (env.DEBUG_MODE) {
+        console.error(
+          JSON.stringify(
+            {
+              type: error.name,
+              message: error.message,
+              userMessage: error.userMessage,
+              details: error.details,
+              stack: error.stack,
+              fieldErrors: error.fieldError,
+            },
+            null,
+            2,
+          ),
+        );
+      }
+    } else {
+      console.error(`[LOGIN] Unexpected error: ${error.message}`);
+
+      if (env.DEBUG_MODE) {
+        console.error(
+          JSON.stringify(
+            {
+              type: error.name || "UnknownError",
+              message: error.message,
+              stack: error.stack,
+            },
+            null,
+            2,
+          ),
+        );
+      }
+    }
+
+    let errorMessage = "An error occurred. Please try again later.";
+    if (isLoginError(error)) {
+      if (error.userMessage) errorMessage = error.userMessage;
+      if (error.fieldError) return { fieldError: error.fieldError };
+    }
     return {
-      formError: "An error occurred. Please try again later.",
+      formError: errorMessage,
     };
   }
 }
