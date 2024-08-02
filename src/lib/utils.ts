@@ -1,18 +1,27 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { randomBytes } from "crypto";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const generateRandomString = (length: number) => {
-  const alphabet =
-    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  let result = "";
-  for (let i = 0; i < length; i++) {
-    result += alphabet.charAt(Math.floor(Math.random() * alphabet.length));
-  }
-  return result;
+export const generateRandomString = (
+  length: number,
+  numericOnly: boolean = false,
+) => {
+  const numericAlphabet = "23456789"; // Removing 0 and 1
+  const alphabet = numericOnly
+    ? numericAlphabet
+    : "abcdefghjkmnpqrstuvwxyz23456789"; // Lowercase letters only, removing 0, 1, and ambiguous letters
+
+  const secureRandomString = randomBytes(length)
+    .map((value) =>
+      alphabet.charCodeAt(Math.floor((value / 256) * alphabet.length)),
+    )
+    .reduce((acc, charCode) => acc + String.fromCharCode(charCode), "");
+
+  return secureRandomString;
 };
 
 export const timeFromNow = (time: Date) => {
