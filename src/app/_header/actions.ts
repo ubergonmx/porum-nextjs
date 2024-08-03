@@ -9,9 +9,7 @@ import { redirect } from "next/navigation";
 export async function logout(): Promise<{ error: string } | void> {
   const { session } = await validateRequest();
   if (!session) {
-    return {
-      error: "Unauthorized",
-    };
+    throw new Error("Unauthorized");
   }
   await lucia.invalidateSession(session.id);
   const sessionCookie = lucia.createBlankSessionCookie();
