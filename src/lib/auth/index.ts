@@ -1,8 +1,10 @@
-import { Lucia, TimeSpan, Scrypt } from "lucia";
+import { Lucia, TimeSpan } from "lucia";
 import { DrizzlePostgreSQLAdapter } from "@lucia-auth/adapter-drizzle";
 import { env } from "@/env";
 import { sessions, users, type User as DbUser } from "@/db/schema";
 import { database as db } from "@/db/database";
+import { hash } from "@node-rs/argon2";
+import { argon2idConfig } from "./hash";
 
 const adapter = new DrizzlePostgreSQLAdapter(db, sessions, users);
 
@@ -24,7 +26,7 @@ export const lucia = new Lucia(adapter, {
   sessionExpiresIn: new TimeSpan(30, "d"),
   sessionCookie: {
     name: "session",
-    expires: false, // session cookies have very long lifespan (2 years)
+    expires: false,
     attributes: {
       secure: env.NODE_ENV === "production",
     },
@@ -56,9 +58,14 @@ async function createAdminUser() {
   const firstName = "Admin";
   const lastName = "User";
   const username = "admin";
-  const email = "admin@example.com";
-  const password = "a6509314aeb22d38";
-  const hashedPassword = await new Scrypt().hash(password);
+  const email = env.ADMIN_EMAIL;
+  const password = env.ADMIN_PASSWORD;
+  const hashedPassword = await hash(password, argon2idConfig);
+
+  if (!hashedPassword) {
+    console.error("Failed to hash password");
+    return;
+  }
 
   await db.insert(users).values({
     firstName,
