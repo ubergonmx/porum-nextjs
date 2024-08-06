@@ -70,12 +70,14 @@ export async function login(
 
     if (user.role === "admin") {
       console.log(
-        `[LOGIN] Admin logged in with id: ${user.id}(${user.username})`,
+        `[LOGIN] Admin logged in with id: ${user.id} (${user.username})`,
       );
       return redirect(Paths.AdminDashboard);
     }
 
-    console.log(`[LOGIN] User logged in with id: ${user.id}(${user.username})`);
+    console.log(
+      `[LOGIN] User logged in with id: ${user.id} (${user.username})`,
+    );
     return redirect(Paths.Home);
   } catch (error: any | FormError<LoginInput>) {
     if (isRedirectError(error)) throw error; // thrown exclusively because of redirect
