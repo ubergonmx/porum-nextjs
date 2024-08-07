@@ -35,6 +35,8 @@ export function getIP() {
     realIP,
     "; Cloudflare-IP: ",
     cloudflareIP,
+    "; Remote-Addr: ",
+    headers().get("remote-addr"),
   );
 
   if (forwardedFor) return forwardedFor.split(",")[0].trim();
