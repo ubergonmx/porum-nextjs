@@ -17,6 +17,16 @@ export class FormError<T> extends Error {
   }
 }
 
+export class UnauthorizedError extends Error {
+  readonly name = "UnauthorizedError";
+  readonly details?: string;
+
+  constructor(details?: string) {
+    super("Unauthorized");
+    if (details) this.message = details;
+  }
+}
+
 export const formErrorStringify = (error: FormError<unknown>) =>
   JSON.stringify(
     {
@@ -26,6 +36,18 @@ export const formErrorStringify = (error: FormError<unknown>) =>
       details: error.details,
       stack: error.stack,
       fieldErrors: error.fieldError,
+    },
+    null,
+    2,
+  );
+
+export const unauthorizedErrorStringify = (error: UnauthorizedError) =>
+  JSON.stringify(
+    {
+      type: error.name,
+      message: error.message,
+      details: error.details,
+      stack: error.stack,
     },
     null,
     2,
@@ -41,13 +63,3 @@ export const unknownErrorStringify = (error: Error) =>
     null,
     2,
   );
-
-export class UnauthorizedError extends Error {
-  readonly name = "UnauthorizedError";
-  readonly details?: string;
-
-  constructor(details?: string) {
-    super("Unauthorized");
-    if (details) this.message = details;
-  }
-}
