@@ -10,4 +10,5 @@ export enum Paths {
   AdminDashboard = "/dashboard",
   VerifyEmail = "/verify-email",
   ResetPassword = "/reset-password",
+  CreateSubporum = "/p/create",
 }
