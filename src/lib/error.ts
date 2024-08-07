@@ -1,7 +1,6 @@
 // lib/errors.ts
 
 import { FormErrorOptions } from "@/lib/types";
-import { LoginInput, SignupInput } from "@/lib/validators/auth";
 
 export class FormError<T> extends Error {
   readonly name: string;
@@ -18,10 +17,37 @@ export class FormError<T> extends Error {
   }
 }
 
-export function isLoginError(error: unknown): error is FormError<LoginInput> {
-  return error instanceof FormError && error.name === "LoginError";
-}
+export const formErrorStringify = (error: FormError<unknown>) =>
+  JSON.stringify(
+    {
+      type: error.name,
+      message: error.message,
+      userMessage: error.userMessage,
+      details: error.details,
+      stack: error.stack,
+      fieldErrors: error.fieldError,
+    },
+    null,
+    2,
+  );
 
-export function isSignupError(error: unknown): error is FormError<SignupInput> {
-  return error instanceof FormError && error.name === "SignupError";
+export const unknownErrorStringify = (error: Error) =>
+  JSON.stringify(
+    {
+      type: error.name || "UnknownError",
+      message: error.message,
+      stack: error.stack,
+    },
+    null,
+    2,
+  );
+
+export class UnauthorizedError extends Error {
+  readonly name = "UnauthorizedError";
+  readonly details?: string;
+
+  constructor(details?: string) {
+    super("Unauthorized");
+    if (details) this.message = details;
+  }
 }

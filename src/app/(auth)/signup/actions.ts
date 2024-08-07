@@ -17,7 +17,11 @@ import { argon2idConfig } from "@/lib/auth/hash";
 import { EmailTemplate, sendMail } from "@/lib/email";
 import { generateEmailVerificationCode } from "../verify-email/actions";
 import { isRedirectError } from "next/dist/client/components/redirect";
-import { FormError, isSignupError } from "@/lib/error";
+import {
+  FormError,
+  formErrorStringify,
+  unknownErrorStringify,
+} from "@/lib/error";
 
 export async function signup(
   values: SignupInput,
@@ -134,49 +138,17 @@ export async function signup(
   } catch (error: any | FormError<SignupInput>) {
     if (isRedirectError(error)) throw error; // thrown exclusively because of redirect
 
+    let errorMessage = "An error occurred, please try again later";
     if (error instanceof FormError) {
       console.error(`[SIGNUP] ${error.name}: ${error.message}`);
+      if (env.DEBUG_MODE) console.error(formErrorStringify(error));
 
-      if (env.DEBUG_MODE) {
-        console.error(
-          JSON.stringify(
-            {
-              type: error.name,
-              message: error.message,
-              userMessage: error.userMessage,
-              details: error.details,
-              stack: error.stack,
-              fieldErrors: error.fieldError,
-            },
-            null,
-            2,
-          ),
-        );
-      }
-    } else {
-      console.error(`[SIGNUP] Unexpected error: ${error.message}`);
-
-      if (env.DEBUG_MODE) {
-        console.error(
-          JSON.stringify(
-            {
-              type: error.name || "UnknownError",
-              message: error.message,
-              stack: error.stack,
-            },
-            null,
-            2,
-          ),
-        );
-      }
-    }
-
-    let errorMessage = "An error occurred, please try again later";
-    if (isSignupError(error)) {
       errorMessage = error.userMessage ?? errorMessage;
       if (error.fieldError) return { fieldError: error.fieldError };
+    } else {
+      console.error(`[SIGNUP] Unexpected error: ${error.message}`);
+      if (env.DEBUG_MODE) console.error(unknownErrorStringify(error));
     }
-
     return {
       formError: errorMessage,
     };

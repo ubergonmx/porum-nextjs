@@ -12,7 +12,11 @@ import { verify } from "@node-rs/argon2";
 import { argon2idConfig } from "@/lib/auth/hash";
 import { isRedirectError } from "next/dist/client/components/redirect";
 import { env } from "@/env";
-import { FormError, isLoginError } from "@/lib/error";
+import {
+  FormError,
+  formErrorStringify,
+  unknownErrorStringify,
+} from "@/lib/error";
 
 export async function login(
   values: LoginInput,
@@ -82,47 +86,16 @@ export async function login(
   } catch (error: any | FormError<LoginInput>) {
     if (isRedirectError(error)) throw error; // thrown exclusively because of redirect
 
+    let errorMessage = "An error occurred, please try again later";
     if (error instanceof FormError) {
       console.error(`[LOGIN] ${error.name}: ${error.message}`);
+      if (env.DEBUG_MODE) console.error(formErrorStringify(error));
 
-      if (env.DEBUG_MODE) {
-        console.error(
-          JSON.stringify(
-            {
-              type: error.name,
-              message: error.message,
-              userMessage: error.userMessage,
-              details: error.details,
-              stack: error.stack,
-              fieldErrors: error.fieldError,
-            },
-            null,
-            2,
-          ),
-        );
-      }
-    } else {
-      console.error(`[LOGIN] Unexpected error: ${error.message}`);
-
-      if (env.DEBUG_MODE) {
-        console.error(
-          JSON.stringify(
-            {
-              type: error.name || "UnknownError",
-              message: error.message,
-              stack: error.stack,
-            },
-            null,
-            2,
-          ),
-        );
-      }
-    }
-
-    let errorMessage = "An error occurred, please try again later";
-    if (isLoginError(error)) {
       errorMessage = error.userMessage ?? errorMessage;
       if (error.fieldError) return { fieldError: error.fieldError };
+    } else {
+      console.error(`[LOGIN] Unexpected error: ${error.message}`);
+      if (env.DEBUG_MODE) console.error(unknownErrorStringify(error));
     }
     return {
       formError: errorMessage,
