@@ -26,8 +26,19 @@ export const standardRateLimit = new Ratelimit({
 export function getIP() {
   const forwardedFor = headers().get("x-forwarded-for");
   const realIP = headers().get("x-real-ip");
+  const cloudflareIP = headers().get("cf-connecting-ip");
+
+  console.log(
+    "[RL] Forwarded-For: ",
+    forwardedFor,
+    "; Real-IP: ",
+    realIP,
+    "; Cloudflare-IP: ",
+    cloudflareIP,
+  );
 
   if (forwardedFor) return forwardedFor.split(",")[0].trim();
   if (realIP) return realIP.trim();
+  if (cloudflareIP) return cloudflareIP.trim();
   return headers().get("remote-addr");
 }
