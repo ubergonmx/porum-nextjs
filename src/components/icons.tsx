@@ -1,6 +1,6 @@
 import { forwardRef, type SVGProps } from "react";
 import { cn } from "@/lib/utils";
-import { LucideProps, User, MessageSquare } from "lucide-react";
+import { LucideProps, MessageSquare } from "lucide-react";
 
 const AnimatedSpinner = forwardRef<SVGSVGElement, SVGProps<SVGSVGElement>>(
   ({ className, ...props }, ref) => (
@@ -66,7 +66,6 @@ export { AnimatedSpinner };
 export { Eye as EyeOpenIcon, EyeOff as EyeCloseIcon } from "lucide-react";
 
 export const Icons = {
-  user: User,
   logo: (props: LucideProps) => (
     <svg {...props} viewBox="0 0 497 497">
       <g>
