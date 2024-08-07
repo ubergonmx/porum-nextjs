@@ -49,7 +49,9 @@ export const sessions = pgTable(
   "sessions",
   {
     id: text("id").primaryKey(),
-    userId: text("user_id").notNull(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
     expiresAt: timestamp("expires_at", {
       withTimezone: true,
       mode: "date",
@@ -66,7 +68,10 @@ export const emailVerificationCodes = pgTable(
     id: text("id")
       .primaryKey()
       .$defaultFn(() => generateIdFromEntropySize(10)),
-    userId: text("user_id").unique().notNull(),
+    userId: text("user_id")
+      .unique()
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
     email: text("email").notNull(),
     code: text("code").notNull(),
     expiresAt: timestamp("expires_at", {
@@ -103,7 +108,9 @@ export const posts = pgTable(
     id: text("id")
       .primaryKey()
       .$defaultFn(() => generateIdFromEntropySize(10)),
-    userId: text("user_id").notNull(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
     username: text("username").notNull(),
     title: text("title").notNull(),
     content: text("content"),
@@ -128,8 +135,12 @@ export const comments = pgTable(
     id: text("id")
       .primaryKey()
       .$defaultFn(() => generateIdFromEntropySize(10)),
-    userId: text("user_id").notNull(),
-    postId: text("post_id").notNull(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    postId: text("post_id")
+      .notNull()
+      .references(() => posts.id, { onDelete: "cascade" }),
     content: text("content").notNull(),
     createdAt: timestamp("created_at", {
       mode: "date",
@@ -155,8 +166,12 @@ export const votes = pgTable(
     id: text("id")
       .primaryKey()
       .$defaultFn(() => generateIdFromEntropySize(10)),
-    userId: text("user_id").notNull(),
-    postId: text("post_id").notNull(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    postId: text("post_id")
+      .notNull()
+      .references(() => posts.id, { onDelete: "cascade" }),
     vote: voteEnum("vote").notNull(),
   },
   (t) => ({
