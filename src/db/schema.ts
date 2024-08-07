@@ -102,6 +102,24 @@ export const passwordResetTokens = pgTable(
   }),
 );
 
+export const subporums = pgTable(
+  "subporums",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => generateIdFromEntropySize(10)),
+    name: text("name").unique().notNull(),
+    description: text("description"),
+    createdAt: timestamp("created_at", {
+      mode: "date",
+      withTimezone: true,
+    }).defaultNow(),
+  },
+  (t) => ({
+    nameIdx: index("subporum_name_idx").on(t.name),
+  }),
+);
+
 export const posts = pgTable(
   "posts",
   {
@@ -111,6 +129,7 @@ export const posts = pgTable(
     userId: text("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
+
     username: text("username").notNull(),
     title: text("title").notNull(),
     content: text("content"),
@@ -183,3 +202,24 @@ export const votes = pgTable(
 
 export type Vote = typeof votes.$inferSelect;
 export type NewVote = typeof votes.$inferInsert;
+
+export const commentVotes = pgTable(
+  "comment_votes",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => generateIdFromEntropySize(10)),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    commentId: text("comment_id")
+      .notNull()
+      .references(() => comments.id, { onDelete: "cascade" }),
+    vote: voteEnum("vote").notNull(),
+  },
+  (t) => ({
+    userIdx: index("comment_vote_user_idx").on(t.userId),
+    commentIdIdx: index("comment_vote_comment_idx").on(t.commentId),
+    voteIdx: index("comment_vote_idx").on(t.userId, t.commentId),
+  }),
+);
