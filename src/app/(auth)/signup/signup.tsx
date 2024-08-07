@@ -28,7 +28,8 @@ import { SubmitButton } from "@/components/submit-button";
 import Link from "next/link";
 import { signupSchema, SignupInput } from "@/lib/validators/auth";
 import { signup } from "./actions";
-import Image from "next/image";
+import Image, { StaticImageData } from "next/image";
+import defaultAvatar from "@/assets/avatars/defaultAvatar.png";
 
 import { APP_TITLE } from "@/lib/constants";
 type FormFieldKey =
@@ -43,7 +44,9 @@ export default function Signup() {
   const [isPending, startTransition] = useTransition();
   const [signupError, setSignupError] = useState<string | null>(null);
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
-  const [avatarURL, setAvatarURL] = useState<string>("/avatars/default.png");
+  const [avatarURL, setAvatarURL] = useState<string | StaticImageData>(
+    defaultAvatar,
+  );
 
   const form = useForm<SignupInput>({
     resolver: zodResolver(signupSchema),
