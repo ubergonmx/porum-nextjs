@@ -2,31 +2,30 @@ import { AvatarProps } from "@radix-ui/react-avatar";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import defaultAvatar from "@/assets/avatars/defaultAvatar.png";
 import Image from "next/image";
-import { User as UserIcon } from "lucide-react";
-import { User } from "lucia";
+import { User } from "lucide-react";
 
 interface UserAvatarProps extends AvatarProps {
-  user: Pick<User, "avatar" | "username"> | null;
+  user: { image: string | null; name: string };
 }
 
 export function UserAvatar({ user, ...props }: UserAvatarProps) {
-  const avatarURL = user?.avatar ?? defaultAvatar;
+  const avatarURL = user.image ?? defaultAvatar;
 
   return (
     <Avatar {...props}>
-      {user?.avatar ? (
+      {user.image ? (
         <div className="relative aspect-square size-full">
           <Image
             fill
             src={avatarURL}
-            alt="avatar"
+            alt="profile picture"
             referrerPolicy="no-referrer"
           />
         </div>
       ) : (
         <AvatarFallback>
-          <span className="sr-only">{user?.username}</span>
-          <UserIcon className="size-4" />
+          <span className="sr-only">{user.name}</span>
+          <User className="size-4" />
         </AvatarFallback>
       )}
     </Avatar>

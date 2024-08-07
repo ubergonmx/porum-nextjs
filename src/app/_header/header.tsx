@@ -75,7 +75,7 @@ async function HeaderActions() {
           <DropdownMenuTrigger asChild>
             <Button variant="secondary" size="icon" className="rounded-full">
               {/* <CircleUser className="size-5" /> */}
-              <UserAvatar user={user} />
+              <UserAvatar user={{ image: user.avatar, name: user.username }} />
               <span className="sr-only">Toggle user menu</span>
             </Button>
           </DropdownMenuTrigger>
