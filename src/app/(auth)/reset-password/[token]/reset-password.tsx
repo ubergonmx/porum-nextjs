@@ -7,7 +7,7 @@ import { SubmitButton } from "@/components/submit-button";
 import { PasswordInput } from "@/components/password-input";
 import { Label } from "@/components/ui/label";
 import { resetPassword } from "./actions";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { Paths } from "@/lib/constants";
 
 export function ResetPassword({ token }: { token: string }) {
