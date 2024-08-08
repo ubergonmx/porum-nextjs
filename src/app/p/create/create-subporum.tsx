@@ -67,7 +67,7 @@ export default function CreateSubPorum() {
 
           // Redirect to the new subporum
           const redirect = result.redirect ?? values.name;
-          router.push(`/r/${redirect}`);
+          router.push(`/p/${redirect}`);
         }
       });
     });
