@@ -39,6 +39,26 @@ export class ActionError extends Error {
   }
 }
 
+export class APIError extends Error {
+  readonly name: string;
+  readonly userMessage?: string;
+  readonly status: number;
+  readonly details?: string;
+
+  constructor(
+    name: string,
+    message: string,
+    status: number,
+    options: ActionErrorOptions,
+  ) {
+    super(message);
+    this.name = name;
+    this.status = status;
+    if (options.userMessage) this.userMessage = options.userMessage;
+    if (options.details) this.details = options.details;
+  }
+}
+
 export const formErrorStringify = (error: FormError<unknown>) =>
   JSON.stringify(
     {
@@ -71,6 +91,20 @@ export const actionErrorStringify = (error: ActionError) =>
       type: error.name,
       message: error.message,
       userMessage: error.userMessage,
+      details: error.details,
+      stack: error.stack,
+    },
+    null,
+    2,
+  );
+
+export const apiErrorStringify = (error: APIError) =>
+  JSON.stringify(
+    {
+      type: error.name,
+      message: error.message,
+      userMessage: error.userMessage,
+      status: error.status,
       details: error.details,
       stack: error.stack,
     },

@@ -5,7 +5,11 @@ import "@/styles/globals.css";
 import { APP_TITLE } from "@/lib/constants";
 import { Toaster } from "@/components/ui/toaster";
 import { cn } from "@/lib/utils";
+import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
+import { extractRouterConfig } from "uploadthing/server";
+import { ourFileRouter } from "@/app/api/uploadthing/core";
 import Header from "./_header/header";
+import ReactQueryProvider from "./providers/react-query-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -32,10 +36,14 @@ export default function RootLayout({
       )}
     >
       <body className="flex min-h-screen w-full flex-col bg-slate-50 antialiased">
-        <Header />
-        <div className="container mx-auto h-full max-w-7xl pt-12">
-          {children}
-        </div>
+        <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
+
+        <ReactQueryProvider>
+          <Header />
+          <div className="container mx-auto h-full max-w-7xl pt-12">
+            {children}
+          </div>
+        </ReactQueryProvider>
         <Toaster />
       </body>
     </html>

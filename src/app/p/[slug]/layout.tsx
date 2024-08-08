@@ -48,72 +48,70 @@ const Layout = async ({
   if (!subporum) return notFound();
 
   return (
-    <div className="mx-auto h-full max-w-7xl pt-12 sm:container">
-      <div>
-        {/* <ToFeedButton /> */}
+    // <div className="mx-auto h-full max-w-7xl pt-12 sm:container">
+    <>
+      {/* <ToFeedButton /> */}
 
-        <div className="grid grid-cols-1 gap-y-4 py-6 md:grid-cols-3 md:gap-x-4">
-          <ul className="col-span-2 flex flex-col space-y-6">{children}</ul>
+      <div className="grid grid-cols-1 gap-y-4 py-6 md:grid-cols-3 md:gap-x-4">
+        <ul className="col-span-2 flex flex-col space-y-6">{children}</ul>
 
-          {/* info sidebar */}
-          <Card className="order-first h-fit overflow-hidden md:order-last">
-            <CardHeader className="px-6 py-4">
-              <p className="py-3 font-semibold">About p/{subporum.name}</p>
-            </CardHeader>
-            <dl className="divide-gray-100 bg-white px-6 py-4 text-sm leading-6">
-              <div className="flex justify-between gap-x-4 py-3">
-                <dt className="text-gray-500">Created</dt>
-                <dd className="text-gray-700">
-                  {subporum.createdAt ? (
-                    <>
-                      <time dateTime={subporum.createdAt.toDateString()}>
-                        {format(subporum.createdAt, "MMMM d, yyyy")}
-                      </time>
-                    </>
-                  ) : (
-                    "Date not provided"
-                  )}
-                </dd>
-              </div>
-              <Separator />
-              <div className="flex justify-between gap-x-4 py-3">
-                <dt className="text-gray-500">Members</dt>
-                <dd className="flex items-start gap-x-2">
-                  <div className="text-gray-900">{memberCount}</div>
-                </dd>
-              </div>
-              {subporum.userId === user?.id ? (
-                <>
-                  <Separator />
-                  <div className="flex justify-between gap-x-4 py-3">
-                    <dt className="text-gray-500">
-                      You created this community
-                    </dt>
-                  </div>
-                </>
-              ) : null}
+        {/* info sidebar */}
+        <Card className="order-first h-fit overflow-hidden md:order-last">
+          <CardHeader className="px-6 py-4">
+            <p className="py-3 font-semibold">About p/{subporum.name}</p>
+          </CardHeader>
+          <dl className="divide-gray-100 bg-white px-6 py-4 text-sm leading-6">
+            <div className="flex justify-between gap-x-4 py-3">
+              <dt className="text-gray-500">Created</dt>
+              <dd className="text-gray-700">
+                {subporum.createdAt ? (
+                  <>
+                    <time dateTime={subporum.createdAt.toDateString()}>
+                      {format(subporum.createdAt, "MMMM d, yyyy")}
+                    </time>
+                  </>
+                ) : (
+                  "Date not provided"
+                )}
+              </dd>
+            </div>
+            <Separator />
+            <div className="flex justify-between gap-x-4 py-3">
+              <dt className="text-gray-500">Members</dt>
+              <dd className="flex items-start gap-x-2">
+                <div className="text-gray-900">{memberCount}</div>
+              </dd>
+            </div>
+            {subporum.userId === user?.id ? (
+              <>
+                <Separator />
+                <div className="flex justify-between gap-x-4 py-3">
+                  <dt className="text-gray-500">You created this community</dt>
+                </div>
+              </>
+            ) : null}
 
-              {subporum.userId !== user?.id ? (
-                <SubscribeLeaveToggle
-                  isSubscribed={isSubscribed}
-                  subporumId={subporum.id}
-                  subporumName={subporum.name}
-                />
-              ) : null}
-              <Link
-                className={buttonVariants({
-                  variant: "outline",
-                  className: "w-full mb-6",
-                })}
-                href={`/p/${slug}/submit`}
-              >
-                Create Post
-              </Link>
-            </dl>
-          </Card>
-        </div>
+            {subporum.userId !== user?.id ? (
+              <SubscribeLeaveToggle
+                isSubscribed={isSubscribed}
+                subporumId={subporum.id}
+                subporumName={subporum.name}
+              />
+            ) : null}
+            <Link
+              className={buttonVariants({
+                variant: "outline",
+                className: "w-full mb-6",
+              })}
+              href={`/p/${slug}/submit`}
+            >
+              Create Post
+            </Link>
+          </dl>
+        </Card>
       </div>
-    </div>
+    </>
+    // </div>
   );
 };
 

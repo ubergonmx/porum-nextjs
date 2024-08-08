@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const MAX_FILE_SIZE = 1024 * 1024 * 5;
+export const MAX_FILE_SIZE = 4; // 4MB, should be in power of 2 and MB
 const ACCEPTED_IMAGE_TYPES = ["image/png", "image/jpeg"];
 
 // const EMAIL_REGEX =
@@ -85,8 +85,8 @@ export const signupSchema = z.object({
     .instanceof(File)
     .optional()
     .refine(
-      (file) => !file || file.size <= MAX_FILE_SIZE,
-      `Max image size is 5MB`,
+      (file) => !file || file.size <= MAX_FILE_SIZE * 1024 * 1024,
+      `Max image size is ${MAX_FILE_SIZE}MB`,
     )
     .refine(
       (file) => !file || ACCEPTED_IMAGE_TYPES.includes(file.type),
