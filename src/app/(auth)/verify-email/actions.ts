@@ -7,11 +7,10 @@ import { generateRandomString, timeFromNow } from "@/lib/utils";
 import { createDate, isWithinExpirationDate, TimeSpan } from "oslo";
 import { validateRequest } from "@/lib/auth/validate-request";
 import { redirect } from "next/navigation";
-import { Paths } from "@/lib/constants";
+import { CODE_LENGTH, Paths } from "@/lib/constants";
 import { lucia } from "@/lib/auth";
 import { cookies } from "next/headers";
 import { EmailTemplate, sendMail } from "@/lib/email";
-import { CODE_LENGTH } from "./page";
 
 export async function generateEmailVerificationCode(
   userId: string,
