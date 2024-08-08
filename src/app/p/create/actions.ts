@@ -1,7 +1,7 @@
 "use server";
 
 import { database as db } from "@/db/database";
-import { subporums } from "@/db/schema";
+import { subporums, subscriptions } from "@/db/schema";
 import { env } from "@/env";
 import { validateRequest } from "@/lib/auth/validate-request";
 import {
@@ -59,12 +59,22 @@ export async function createSubporum(
       .insert(subporums)
       .values({
         name,
+        userId: user.id,
       })
       .returning();
 
+    await db
+      .insert(subscriptions)
+      .values({
+        subporumId: subporum.id,
+        userId: user.id,
+      })
+      .execute();
+
     console.log(
-      `[CREATE_SUBPORUM] Subporum created with id: ${subporum.id} (${subporum.name}) by user: ${user.id} (${user.username})`,
+      `[CREATE_SUBPORUM] Subporum created and subscribed with id: ${subporum.id} (${subporum.name}) by user: ${user.id} (${user.username})`,
     );
+
     return { success: true, redirect: subporum.name };
   } catch (error: any | FormError<CreateSubporumInput>) {
     if (isRedirectError(error)) throw error; // thrown exclusively because of redirect
