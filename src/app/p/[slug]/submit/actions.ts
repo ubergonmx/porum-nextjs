@@ -69,17 +69,17 @@ export async function submitPost(
   } catch (error: any | FormError<PostInput>) {
     let errorMessage = "An error occurred, please try again later";
     if (error instanceof FormError) {
-      console.error(`SUBMIT_POST] ${error.name}: ${error.details}`);
+      console.error(`[SUBMIT_POST] ${error.name}: ${error.details}`);
       if (env.DEBUG_MODE) console.error(formErrorStringify(error));
 
       errorMessage = error.userMessage ?? errorMessage;
       if (error.fieldError) return { fieldError: error.fieldError };
     } else if (error instanceof UnauthorizedError) {
-      console.error(`SUBMIT_POST] ${error.name}: ${error.message}`);
+      console.error(`[SUBMIT_POST] ${error.name}: ${error.message}`);
       if (env.DEBUG_MODE) console.error(unauthorizedErrorStringify(error));
       errorMessage = error.message;
     } else {
-      console.error(`SUBMIT_POST] Unexpected error: ${error.message}`);
+      console.error(`[SUBMIT_POST] Unexpected error: ${error.message}`);
       if (env.DEBUG_MODE) console.error(unknownErrorStringify(error));
     }
     return { formError: errorMessage };
