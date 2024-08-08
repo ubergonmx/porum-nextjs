@@ -14,7 +14,6 @@ import {
 import { getIP } from "@/lib/ratelimit";
 import { ActionResponse } from "@/lib/types";
 import { CreateSubporumInput, subporumSchema } from "@/lib/validators/subporum";
-import { isRedirectError } from "next/dist/client/components/redirect";
 
 export async function createSubporum(
   input: CreateSubporumInput,
@@ -77,8 +76,6 @@ export async function createSubporum(
 
     return { success: true, redirect: subporum.name };
   } catch (error: any | FormError<CreateSubporumInput>) {
-    if (isRedirectError(error)) throw error; // thrown exclusively because of redirect
-
     let errorMessage = "An error occurred, please try again later";
     if (error instanceof FormError) {
       console.error(`[CREATE_SUBPORUM] ${error.name}: ${error.details}`);
