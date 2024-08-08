@@ -8,7 +8,7 @@ import {
 import { redirect } from "next/navigation";
 import { validateRequest } from "@/lib/auth/validate-request";
 import { VerifyCode } from "./verify-code";
-import { Paths } from "@/lib/constants";
+import { CODE_LENGTH, Paths } from "@/lib/constants";
 
 export const metadata = {
   title: "Verify Email",
@@ -37,7 +37,7 @@ export default async function VerifyEmailPage() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <VerifyCode codeLength={7} userRole={user.role} />
+        <VerifyCode codeLength={CODE_LENGTH} userRole={user.role} />
       </CardContent>
     </Card>
   );
