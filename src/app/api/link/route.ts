@@ -8,10 +8,9 @@ import { getIP } from "@/lib/ratelimit";
 import axios from "axios";
 
 export async function GET(req: Request) {
+  const searchParams = new URL(req.url).searchParams;
   try {
-    const url = new URL(req.url);
-    const href = url.searchParams.get("url");
-
+    const href = searchParams.get("url");
     if (!href) {
       throw new APIError("InvalidURLError", "Invalid URL", 400, {
         userMessage: "Invalid href",
