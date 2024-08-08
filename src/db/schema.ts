@@ -202,7 +202,7 @@ export const postsRelations = relations(posts, ({ one, many }) => ({
     references: [users.id],
   }),
   subporum: one(subporums, {
-    fields: [posts.subporumsId],
+    fields: [posts.subporumId],
     references: [subporums.id],
   }),
   comments: many(comments),

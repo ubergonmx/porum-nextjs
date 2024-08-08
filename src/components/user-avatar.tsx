@@ -5,7 +5,7 @@ import Image from "next/image";
 import { User } from "lucide-react";
 
 interface UserAvatarProps extends AvatarProps {
-  user: { image: string | null; name: string };
+  user: { image: string | null | undefined; name: string };
 }
 
 export function UserAvatar({ user, ...props }: UserAvatarProps) {

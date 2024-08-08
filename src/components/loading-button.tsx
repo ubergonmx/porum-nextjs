@@ -19,12 +19,8 @@ const LoadingButton = forwardRef<HTMLButtonElement, LoadingButtonProps>(
         disabled={props.disabled ? props.disabled : loading}
         className={cn(className, "relative")}
       >
-        <span className={cn(loading ? "opacity-0" : "")}>{children}</span>
-        {loading ? (
-          <div className="absolute inset-0 grid place-items-center">
-            <AnimatedSpinner className="size-6" />
-          </div>
-        ) : null}
+        {loading ? <AnimatedSpinner className="size-4" /> : null}
+        <span className={cn(loading ? "ml-2" : "")}>{children}</span>
       </Button>
     );
   },
