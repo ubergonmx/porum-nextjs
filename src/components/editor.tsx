@@ -106,7 +106,6 @@ export const Editor: FC<EditorProps> = ({ subporumId }) => {
             config: {
               uploader: {
                 async uploadByFile(file: File) {
-                  // upload to uploadthing
                   const [res] = await uploadFiles("attachment", {
                     files: [file],
                   });

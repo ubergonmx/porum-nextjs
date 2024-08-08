@@ -10,8 +10,6 @@ import { validateRequest } from "@/lib/auth/validate-request";
 import { VerifyCode } from "./verify-code";
 import { Paths } from "@/lib/constants";
 
-export const CODE_LENGTH = 7;
-
 export const metadata = {
   title: "Verify Email",
   description: "Verify Email Page",
@@ -39,7 +37,7 @@ export default async function VerifyEmailPage() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <VerifyCode codeLength={CODE_LENGTH} userRole={user.role} />
+        <VerifyCode codeLength={7} userRole={user.role} />
       </CardContent>
     </Card>
   );

@@ -6,6 +6,8 @@ import {
   pgEnum,
   AnyPgColumn,
   primaryKey,
+  json,
+  integer,
 } from "drizzle-orm/pg-core";
 import { DATABASE_PREFIX as prefix } from "@/lib/constants";
 import { generateIdFromEntropySize } from "lucia";
@@ -152,6 +154,7 @@ export const subporums = pgTable(
       .references(() => users.id, { onDelete: "cascade" }),
     name: text("name").unique().notNull(),
     description: text("description"),
+    minimumDays: integer("minimumDays").default(0),
     createdAt: timestamp("created_at", {
       mode: "date",
       withTimezone: true,
@@ -184,7 +187,7 @@ export const posts = pgTable(
       .notNull()
       .references(() => subporums.id, { onDelete: "cascade" }),
     title: text("title").notNull(),
-    content: text("content"),
+    content: json("content"),
     createdAt: timestamp("created_at", {
       mode: "date",
       withTimezone: true,

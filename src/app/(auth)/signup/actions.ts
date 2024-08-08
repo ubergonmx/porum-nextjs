@@ -22,6 +22,7 @@ import {
   formErrorStringify,
   unknownErrorStringify,
 } from "@/lib/error";
+import { uploadFiles } from "@/lib/uploadthing";
 
 export async function signup(
   values: SignupInput,
@@ -88,15 +89,20 @@ export async function signup(
       });
     }
 
-    let filename: string | undefined;
+    let url: string | undefined;
     if (avatar) {
       if (env.STORAGE === "local") {
-        filename = `${Date.now()}-${generateIdFromEntropySize(5)}-${avatar.name.replaceAll(" ", "_")}`;
+        url = `${Date.now()}-${generateIdFromEntropySize(5)}-${avatar.name.replaceAll(" ", "_")}`;
         const buffer = Buffer.from(await avatar.arrayBuffer());
-        const fullPath = process.cwd() + "/" + env.LOCAL_AVATAR_PATH + filename;
+        const fullPath = process.cwd() + "/" + env.LOCAL_AVATAR_PATH + url;
         await fsWriteFile(fullPath, buffer);
 
         console.log("[SIGNUP] Avatar saved to", fullPath);
+      } else if (env.STORAGE === "online") {
+        const [res] = await uploadFiles("avatar", {
+          files: [avatar],
+        });
+        url = res.url;
       }
     }
     const hashedPassword = await hash(password, argon2idConfig);
@@ -111,7 +117,7 @@ export async function signup(
         password: hashedPassword,
         phoneNumber: phone,
         role: "user",
-        avatar: filename,
+        avatar: url,
       })
       .returning();
 
