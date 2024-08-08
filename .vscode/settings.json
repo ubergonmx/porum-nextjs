@@ -11,5 +11,13 @@
   "[typescriptreact]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "cSpell.words": ["Porum", "Subporum"]
+  "cSpell.words": [
+    "Autosize",
+    "editorjs",
+    "hookform",
+    "Porum",
+    "Subporum",
+    "tanstack",
+    "uploadthing"
+  ]
 }
