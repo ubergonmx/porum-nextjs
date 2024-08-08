@@ -5,9 +5,11 @@ import {
   timestamp,
   pgEnum,
   AnyPgColumn,
+  primaryKey,
 } from "drizzle-orm/pg-core";
 import { DATABASE_PREFIX as prefix } from "@/lib/constants";
 import { generateIdFromEntropySize } from "lucia";
+import { relations } from "drizzle-orm";
 
 export const pgTable = pgTableCreator((name: string) => `${prefix}_${name}`);
 
@@ -41,6 +43,15 @@ export const users = pgTable(
     emailIdx: index("user_email_idx").on(t.email),
   }),
 );
+
+export const userRelations = relations(users, ({ many }) => ({
+  subporums: many(subporums),
+  posts: many(posts),
+  comments: many(comments),
+  votes: many(votes),
+  commentVotes: many(commentVotes),
+  subscriptions: many(subscriptions),
+}));
 
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
@@ -102,12 +113,43 @@ export const passwordResetTokens = pgTable(
   }),
 );
 
+export const subscriptions = pgTable(
+  "subscriptions",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    subporumId: text("subporum_id")
+      .notNull()
+      .references(() => subporums.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at", {
+      mode: "date",
+      withTimezone: true,
+    }).defaultNow(),
+  },
+  (t) => ({ pk: primaryKey({ columns: [t.userId, t.subporumId] }) }),
+);
+
+export const subscriptionsRelations = relations(subscriptions, ({ one }) => ({
+  user: one(users, {
+    fields: [subscriptions.userId],
+    references: [users.id],
+  }),
+  subporum: one(subporums, {
+    fields: [subscriptions.subporumId],
+    references: [subporums.id],
+  }),
+}));
+
 export const subporums = pgTable(
   "subporums",
   {
     id: text("id")
       .primaryKey()
       .$defaultFn(() => generateIdFromEntropySize(10)),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
     name: text("name").unique().notNull(),
     description: text("description"),
     createdAt: timestamp("created_at", {
@@ -120,6 +162,15 @@ export const subporums = pgTable(
   }),
 );
 
+export const subporumsRelations = relations(subporums, ({ one, many }) => ({
+  creator: one(users, {
+    fields: [subporums.userId],
+    references: [users.id],
+  }),
+  posts: many(posts),
+  subscribers: many(subscriptions),
+}));
+
 export const posts = pgTable(
   "posts",
   {
@@ -129,8 +180,9 @@ export const posts = pgTable(
     userId: text("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-
-    username: text("username").notNull(),
+    subporumId: text("subporum_id")
+      .notNull()
+      .references(() => subporums.id, { onDelete: "cascade" }),
     title: text("title").notNull(),
     content: text("content"),
     createdAt: timestamp("created_at", {
@@ -143,6 +195,19 @@ export const posts = pgTable(
     userIdx: index("post_user_idx").on(t.userId),
   }),
 );
+
+export const postsRelations = relations(posts, ({ one, many }) => ({
+  author: one(users, {
+    fields: [posts.userId],
+    references: [users.id],
+  }),
+  subporum: one(subporums, {
+    fields: [posts.subporumsId],
+    references: [subporums.id],
+  }),
+  comments: many(comments),
+  votes: many(votes),
+}));
 
 export type Post = typeof posts.$inferSelect;
 export type NewPost = typeof posts.$inferInsert;
@@ -175,6 +240,18 @@ export const comments = pgTable(
   }),
 );
 
+export const commentsRelations = relations(comments, ({ one, many }) => ({
+  author: one(users, {
+    fields: [comments.userId],
+    references: [users.id],
+  }),
+  post: one(posts, {
+    fields: [comments.postId],
+    references: [posts.id],
+  }),
+  votes: many(commentVotes),
+}));
+
 export type Comment = typeof comments.$inferSelect;
 export type NewComment = typeof comments.$inferInsert;
 
@@ -200,6 +277,17 @@ export const votes = pgTable(
   }),
 );
 
+export const votesRelations = relations(votes, ({ one }) => ({
+  user: one(users, {
+    fields: [votes.userId],
+    references: [users.id],
+  }),
+  post: one(posts, {
+    fields: [votes.postId],
+    references: [posts.id],
+  }),
+}));
+
 export type Vote = typeof votes.$inferSelect;
 export type NewVote = typeof votes.$inferInsert;
 
@@ -223,3 +311,17 @@ export const commentVotes = pgTable(
     voteIdx: index("comment_vote_idx").on(t.userId, t.commentId),
   }),
 );
+
+export const commentVotesRelations = relations(commentVotes, ({ one }) => ({
+  user: one(users, {
+    fields: [commentVotes.userId],
+    references: [users.id],
+  }),
+  comment: one(comments, {
+    fields: [commentVotes.commentId],
+    references: [comments.id],
+  }),
+}));
+
+export type CommentVote = typeof commentVotes.$inferSelect;
+export type NewCommentVote = typeof commentVotes.$inferInsert;
