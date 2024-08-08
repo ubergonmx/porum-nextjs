@@ -27,8 +27,10 @@ import { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { createSubporum } from "./actions";
+import Link from "next/link";
+import { Paths } from "@/lib/constants";
 
-type FormFieldKey = "name";
+type FormFieldKey = "name" | "minimumDays";
 export default function CreateSubPorum() {
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
@@ -99,9 +101,27 @@ export default function CreateSubPorum() {
                 </FormItem>
               )}
             />
+            <FormField
+              control={form.control}
+              name="minimumDays"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Minimum days</FormLabel>
+                  <FormControl>
+                    <Input id="minimumDays" {...field} type="number" />
+                  </FormControl>
+                  <FormDescription>
+                    Minimum number of days a user must be registered to post.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </CardContent>
           <CardFooter className="justify-between space-x-2">
-            <Button variant="secondary">Cancel</Button>
+            <Button variant="secondary" asChild>
+              <Link href={Paths.Home}>Cancel</Link>
+            </Button>
             <SubmitButton loading={isPending}>Submit</SubmitButton>
           </CardFooter>
         </form>

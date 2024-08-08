@@ -38,7 +38,7 @@ export async function createSubporum(
       );
     }
 
-    const { name } = parsed.data;
+    const { name, minimumDays } = parsed.data;
 
     const existingSubporum = await db.query.subporums.findFirst({
       where: (table, { eq }) => eq(table.name, name),
@@ -58,6 +58,7 @@ export async function createSubporum(
       .insert(subporums)
       .values({
         name,
+        minimumDays,
         userId: user.id,
       })
       .returning();

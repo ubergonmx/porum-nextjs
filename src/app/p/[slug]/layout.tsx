@@ -82,6 +82,13 @@ const Layout = async ({
                 <div className="text-gray-900">{memberCount}</div>
               </dd>
             </div>
+            <Separator />
+            <div className="flex justify-between gap-x-4 py-3">
+              <dt className="text-gray-500">Minimum days to join</dt>
+              <dd className="flex items-start gap-x-2">
+                <div className="text-gray-900">{subporum.minimumDays}</div>
+              </dd>
+            </div>
             {subporum.userId === user?.id ? (
               <>
                 <Separator />
@@ -96,6 +103,8 @@ const Layout = async ({
                 isSubscribed={isSubscribed}
                 subporumId={subporum.id}
                 subporumName={subporum.name}
+                minimumDays={subporum.minimumDays}
+                createdAt={subporum.createdAt || new Date()}
               />
             ) : null}
             <Link

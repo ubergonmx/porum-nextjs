@@ -36,7 +36,7 @@ export async function subscribeSubporum(
       });
     }
 
-    const { subporumId } = parsed.data;
+    const { subporumId, minimumDays, createdAt } = parsed.data;
 
     const subscription = await db.query.subscriptions.findFirst({
       where: (table, { eq }) =>
@@ -48,6 +48,16 @@ export async function subscribeSubporum(
         userMessage: "You are already subscribed to this subporum",
         details: `User: ${user.id} (${user.username}), IP: ${getIP()}`,
       });
+
+    if (user.createdAt !== null) {
+      const diff = Math.abs(user.createdAt.getTime() - createdAt.getTime());
+      const daysDiff = Math.ceil(diff / (1000 * 60 * 60 * 24));
+      if (daysDiff < minimumDays)
+        throw new ActionError("Minimum days not met", {
+          userMessage: `You must be a user for at least ${minimumDays} days`,
+          details: `User: ${user.id} (${user.username}), IP: ${getIP()}`,
+        });
+    }
 
     await db
       .insert(subscriptions)

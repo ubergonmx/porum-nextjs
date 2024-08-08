@@ -154,7 +154,7 @@ export const subporums = pgTable(
       .references(() => users.id, { onDelete: "cascade" }),
     name: text("name").unique().notNull(),
     description: text("description"),
-    minimumDays: integer("minimumDays").default(0),
+    minimumDays: integer("minimumDays").notNull().default(0),
     createdAt: timestamp("created_at", {
       mode: "date",
       withTimezone: true,

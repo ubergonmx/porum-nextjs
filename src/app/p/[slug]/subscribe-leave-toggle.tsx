@@ -10,12 +10,16 @@ interface SubscribeLeaveToggleProps {
   isSubscribed: boolean;
   subporumId: string;
   subporumName: string;
+  minimumDays: number;
+  createdAt: Date;
 }
 
 export default function SubscribeLeaveToggle({
   isSubscribed,
   subporumId,
   subporumName,
+  minimumDays,
+  createdAt,
 }: SubscribeLeaveToggleProps) {
   const { toast } = useToast();
   const router = useRouter();
@@ -23,43 +27,47 @@ export default function SubscribeLeaveToggle({
 
   function unsubscribe() {
     startTransition(() => {
-      unsubscribeSubporum({ subporumId }).then((result) => {
-        if (result?.formError) {
-          toast({
-            title: "Error",
-            description: result.formError,
-            variant: "destructive",
-          });
-        }
-        if (result?.success) {
-          toast({
-            title: "Unsubscribed",
-            description: `You have left p/${subporumName}`,
-          });
-          router.refresh();
-        }
-      });
+      unsubscribeSubporum({ subporumId, minimumDays, createdAt }).then(
+        (result) => {
+          if (result?.formError) {
+            toast({
+              title: "Error",
+              description: result.formError,
+              variant: "destructive",
+            });
+          }
+          if (result?.success) {
+            toast({
+              title: "Unsubscribed",
+              description: `You have left p/${subporumName}`,
+            });
+            router.refresh();
+          }
+        },
+      );
     });
   }
 
   function subscribe() {
     startTransition(() => {
-      subscribeSubporum({ subporumId }).then((result) => {
-        if (result?.formError) {
-          toast({
-            title: "Error",
-            description: result.formError,
-            variant: "destructive",
-          });
-        }
-        if (result?.success) {
-          toast({
-            title: "Subscribed",
-            description: `You have joined p/${subporumName}`,
-          });
-          router.refresh();
-        }
-      });
+      subscribeSubporum({ subporumId, minimumDays, createdAt }).then(
+        (result) => {
+          if (result?.formError) {
+            toast({
+              title: "Error",
+              description: result.formError,
+              variant: "destructive",
+            });
+          }
+          if (result?.success) {
+            toast({
+              title: "Subscribed",
+              description: `You have joined p/${subporumName}`,
+            });
+            router.refresh();
+          }
+        },
+      );
     });
   }
 
