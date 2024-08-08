@@ -6,10 +6,16 @@ import { User } from "lucide-react";
 
 interface UserAvatarProps extends AvatarProps {
   user: { image: string | null | undefined; name: string };
+  defaultAvatarSize?: number;
 }
 
-export function UserAvatar({ user, ...props }: UserAvatarProps) {
+export function UserAvatar({
+  user,
+  defaultAvatarSize,
+  ...props
+}: UserAvatarProps) {
   const avatarURL = user.image ?? defaultAvatar;
+  const size = `size-${defaultAvatarSize}` ?? "4";
 
   return (
     <Avatar {...props}>
@@ -25,7 +31,7 @@ export function UserAvatar({ user, ...props }: UserAvatarProps) {
       ) : (
         <AvatarFallback>
           <span className="sr-only">{user.name}</span>
-          <User className="size-4" />
+          <User className={size} />
         </AvatarFallback>
       )}
     </Avatar>
