@@ -1,6 +1,6 @@
 // lib/errors.ts
 
-import { FormErrorOptions } from "@/lib/types";
+import { ActionErrorOptions, FormErrorOptions } from "@/lib/types";
 
 export class FormError<T> extends Error {
   readonly name: string;
@@ -27,6 +27,18 @@ export class UnauthorizedError extends Error {
   }
 }
 
+export class ActionError extends Error {
+  readonly name = "ActionError";
+  readonly userMessage?: string;
+  readonly details?: string;
+
+  constructor(message: string, options: ActionErrorOptions) {
+    super(message);
+    if (options.userMessage) this.userMessage = options.userMessage;
+    if (options.details) this.details = options.details;
+  }
+}
+
 export const formErrorStringify = (error: FormError<unknown>) =>
   JSON.stringify(
     {
@@ -46,6 +58,19 @@ export const unauthorizedErrorStringify = (error: UnauthorizedError) =>
     {
       type: error.name,
       message: error.message,
+      details: error.details,
+      stack: error.stack,
+    },
+    null,
+    2,
+  );
+
+export const actionErrorStringify = (error: ActionError) =>
+  JSON.stringify(
+    {
+      type: error.name,
+      message: error.message,
+      userMessage: error.userMessage,
       details: error.details,
       stack: error.stack,
     },

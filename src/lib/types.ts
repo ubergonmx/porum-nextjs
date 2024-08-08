@@ -10,3 +10,5 @@ export type FormErrorOptions<T> = {
   fieldError?: Partial<Record<keyof T, string | undefined>>;
   details?: string;
 };
+
+export type ActionErrorOptions = Omit<FormErrorOptions<unknown>, "fieldError">;
