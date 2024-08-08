@@ -64,3 +64,27 @@ Simply run the following command to open Drizzle Studio. If you have any issues,
 ```bash
 npm run db:studio
 ```
+
+### Vercel Build Cache
+
+`Error: ENOENT: no such file or directory, lstat '/vercel/path0/.next/export-detail.json'`
+
+The solution is to simply add to the environment variables:
+`VERCEL_FORCE_NO_BUILD_CACHE: 1`
+
+### Full reset database
+
+Go to local.drizzle.studio after running `npm run db:studio`, paste the following into SQL Runner and then execute:
+
+```
+DO $$
+DECLARE
+  r RECORD;
+BEGIN
+  FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = 'public') LOOP
+      EXECUTE 'DROP TABLE IF EXISTS public.' || quote_ident(r.tablename) || ' CASCADE';
+  END LOOP;
+END $$;
+```
+
+Run `npm run db:push` to create the necessary tables to PostgreSQL.
