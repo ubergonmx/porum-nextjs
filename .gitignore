@@ -45,3 +45,5 @@ next-env.d.ts
 /public/avatars
 # But include default.png avatar
 !/public/avatars/default.png
+
+certificates
