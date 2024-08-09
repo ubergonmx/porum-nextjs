@@ -3,8 +3,8 @@ import { database as db } from "@/db/database";
 import { notFound } from "next/navigation";
 import { desc } from "drizzle-orm";
 import { subporums } from "@/db/schema";
-import { INFINITE_SCROLL_LIMIT } from "@/lib/constants";
 import MiniCreatePost from "@/components/mini-create-post";
+import PostFeed from "@/components/post-feed";
 
 interface PageProps {
   params: {
@@ -28,7 +28,6 @@ const page = async ({ params }: PageProps) => {
           votes: true,
           subporum: true,
         },
-        limit: INFINITE_SCROLL_LIMIT,
       },
     },
   });
@@ -39,7 +38,7 @@ const page = async ({ params }: PageProps) => {
     <>
       <h1 className="h-14 text-3xl font-bold md:text-4xl">p/{subporum.name}</h1>
       <MiniCreatePost user={user} />
-      {/* <PostFeed initialPosts={subreddit.posts} subredditName={subreddit.name} /> */}
+      <PostFeed initialPosts={subporum.posts} subporumName={subporum.name} />
     </>
   );
 };

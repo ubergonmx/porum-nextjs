@@ -104,7 +104,7 @@ const Layout = async ({
                 subporumId={subporum.id}
                 subporumName={subporum.name}
                 minimumDays={subporum.minimumDays}
-                createdAt={subporum.createdAt || new Date()}
+                createdAt={subporum.createdAt!}
               />
             ) : null}
             <Link

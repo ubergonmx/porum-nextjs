@@ -174,6 +174,9 @@ export const subporumsRelations = relations(subporums, ({ one, many }) => ({
   subscribers: many(subscriptions),
 }));
 
+export type Subporum = typeof subporums.$inferSelect;
+export type NewSubporum = typeof subporums.$inferInsert;
+
 export const posts = pgTable(
   "posts",
   {
@@ -293,6 +296,7 @@ export const votesRelations = relations(votes, ({ one }) => ({
 
 export type Vote = typeof votes.$inferSelect;
 export type NewVote = typeof votes.$inferInsert;
+export type VoteType = "up" | "down";
 
 export const commentVotes = pgTable(
   "comment_votes",

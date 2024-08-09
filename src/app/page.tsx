@@ -1,3 +1,5 @@
+import CustomFeed from "@/components/homepage/custom-feed";
+import GeneralFeed from "@/components/homepage/general-feed";
 import { buttonVariants } from "@/components/ui/button";
 import {
   Card,
@@ -20,8 +22,7 @@ export default async function Home() {
     <>
       <h1 className="text-3xl font-bold md:text-4xl">Your feed</h1>
       <div className="grid grid-cols-1 gap-y-4 py-6 md:grid-cols-3 md:gap-x-4">
-        {/* {user ? <CustomFeed /> : <GeneralFeed />} */}
-        {user ? "" : ""}
+        {user ? <CustomFeed /> : <GeneralFeed />}
 
         {/* subporum info */}
         <Card className="order-first h-fit overflow-hidden md:order-last">
