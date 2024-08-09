@@ -62,7 +62,7 @@ const PostComponent: FC<PostProps> = ({
           </a>
 
           <div
-            className="relative max-h-40 w-full text-clip text-sm"
+            className="relative max-h-40 w-full overflow-hidden text-clip text-sm"
             ref={pRef}
           >
             <EditorOutput content={post.content} />
