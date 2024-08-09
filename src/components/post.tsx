@@ -45,9 +45,9 @@ const PostComponent: FC<PostProps> = ({
               <>
                 <a
                   className="text-sm text-zinc-900 underline underline-offset-2"
-                  href={`/r/${subporumName}`}
+                  href={`/p/${subporumName}`}
                 >
-                  r/{subporumName}
+                  p/{subporumName}
                 </a>
                 <span className="px-1">•</span>
               </>
@@ -55,7 +55,7 @@ const PostComponent: FC<PostProps> = ({
             <span>Posted by u/{post.author.username}</span>{" "}
             {formatTimeToNow(new Date(post.createdAt || ""))}
           </div>
-          <a href={`/r/${subporumName}/post/${post.id}`}>
+          <a href={`/p/${subporumName}/post/${post.id}`}>
             <h1 className="py-2 text-lg font-semibold leading-6 text-gray-900">
               {post.title}
             </h1>

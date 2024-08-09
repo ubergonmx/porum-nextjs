@@ -38,7 +38,7 @@ const PostVoteClient = ({
         postId,
       };
 
-      await axios.patch("/api/subreddit/post/vote", payload);
+      await axios.patch("/api/subporum/post/vote", payload);
     },
     onError: (err, voteType) => {
       if (voteType === "up") setVotesAmt((prev) => prev - 1);
@@ -55,7 +55,6 @@ const PostVoteClient = ({
           });
         }
       }
-
       return toast({
         title: "Something went wrong.",
         description: "Your vote was not registered. Please try again.",
