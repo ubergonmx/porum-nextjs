@@ -256,6 +256,11 @@ export const commentsRelations = relations(comments, ({ one, many }) => ({
     references: [posts.id],
   }),
   votes: many(commentVotes),
+  replyTo: one(comments, {
+    fields: [comments.replyToId],
+    references: [comments.id],
+  }),
+  replies: many(comments),
 }));
 
 export type Comment = typeof comments.$inferSelect;
