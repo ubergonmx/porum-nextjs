@@ -1,3 +1,9 @@
+# ARCHIVED
+
+This project is outdated; go to the [updated repository](https://www.github.com/ubergonmx/porum2) instead.
+
+---
+
 # Porum (NextJS)
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
